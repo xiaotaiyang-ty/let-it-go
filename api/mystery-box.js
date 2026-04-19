@@ -9,27 +9,17 @@ const { ObjectId } = require('mongodb');
 const { getCollection } = require('../lib/db');
 const { requireAuth } = require('../lib/auth');
 const { checkAndUpdateQuota, getApiConfig, logUserAction } = require('../lib/ai');
-const fs = require('fs');
-const path = require('path');
 
-// 加载 Prompt 配置
-let promptsConfig = null;
-function loadPrompts() {
-  if (!promptsConfig) {
-    const promptsPath = path.join(__dirname, 'prompts.json');
-    promptsConfig = JSON.parse(fs.readFileSync(promptsPath, 'utf-8'));
-  }
-  return promptsConfig;
-}
+// 直接 require JSON 配置（Vercel 不支持 fs）
+const promptsConfig = require('./prompts.json');
 
 // 随机抽取 Prompt
 function selectRandomPrompt(excludeIds = []) {
-  const config = loadPrompts();
-  const activePrompts = config.prompts.filter(p => p.active && !excludeIds.includes(p.id));
+  const activePrompts = promptsConfig.prompts.filter(p => p.active && !excludeIds.includes(p.id));
 
   if (activePrompts.length === 0) {
     // 如果全部排除了，重新从所有激活的里选
-    const allActive = config.prompts.filter(p => p.active);
+    const allActive = promptsConfig.prompts.filter(p => p.active);
     return allActive[Math.floor(Math.random() * allActive.length)];
   }
 
