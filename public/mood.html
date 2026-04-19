@@ -534,7 +534,7 @@
         // 加载心情数据
         async function loadMoodData() {
             try {
-                const data = await API.get('/api/mood/history');
+                const data = await API.get('/api/mood');
 
                 loadingState.style.display = 'none';
                 mainContent.style.display = 'block';
@@ -587,7 +587,7 @@
                 : '<div class="loading-spinner" style="width:18px;height:18px;margin:0;"></div> 分析中...';
 
             try {
-                const data = await API.post('/api/mood/analyze', {
+                const data = await API.post('/api/mood', {
                     force_refresh: forceRefresh
                 });
 
