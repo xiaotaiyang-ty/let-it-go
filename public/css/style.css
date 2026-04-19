@@ -1149,6 +1149,48 @@ body {
     animation: boxShake 0.5s ease;
 }
 
+/* ============ 右键菜单 ============ */
+.context-menu {
+    position: fixed;
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1001;
+    padding: 4px;
+    min-width: 140px;
+    animation: toolbarFadeIn 0.15s ease;
+}
+
+.context-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.context-menu-item:hover {
+    background: var(--cream-100);
+    color: var(--text-primary);
+}
+
+.context-menu-item.delete-item:hover {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.context-menu-item svg {
+    flex-shrink: 0;
+}
+
 /* ============ 选中文字工具条 ============ */
 .selection-toolbar {
     position: fixed;

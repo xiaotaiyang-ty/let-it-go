@@ -429,9 +429,11 @@ const Chat = {
    */
   appendMessage(role, content, isStreaming = false) {
     const container = document.getElementById('chatContainer');
+    const messageIndex = this.messages.length - (role === 'user' ? 1 : 0); // 当前消息索引
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
+    messageDiv.dataset.index = messageIndex;
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
@@ -443,6 +445,12 @@ const Chat = {
     if (role === 'assistant' && !isStreaming && content) {
       this.addMessageActions(messageDiv, content);
     }
+
+    // 添加右键菜单
+    messageDiv.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      this.showMessageContextMenu(e, messageDiv);
+    });
 
     container.appendChild(messageDiv);
     this.scrollToBottom();
@@ -865,6 +873,91 @@ const Chat = {
    */
   hideMysteryBoxLoading() {
     document.getElementById('loadingIndicator').style.display = 'none';
+  },
+
+  /**
+   * 显示消息右键菜单
+   */
+  showMessageContextMenu(e, messageEl) {
+    // 移除已有的菜单
+    const existingMenu = document.getElementById('messageContextMenu');
+    if (existingMenu) existingMenu.remove();
+
+    const menu = document.createElement('div');
+    menu.id = 'messageContextMenu';
+    menu.className = 'context-menu';
+    menu.innerHTML = `
+      <button class="context-menu-item delete-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+        删除这条消息
+      </button>
+    `;
+
+    menu.style.left = `${e.clientX}px`;
+    menu.style.top = `${e.clientY}px`;
+
+    document.body.appendChild(menu);
+
+    // 防止超出屏幕
+    const rect = menu.getBoundingClientRect();
+    if (rect.right > window.innerWidth) {
+      menu.style.left = `${window.innerWidth - rect.width - 10}px`;
+    }
+    if (rect.bottom > window.innerHeight) {
+      menu.style.top = `${window.innerHeight - rect.height - 10}px`;
+    }
+
+    // 删除按钮点击
+    menu.querySelector('.delete-item').addEventListener('click', () => {
+      this.deleteMessage(messageEl);
+      menu.remove();
+    });
+
+    // 点击其他地方关闭菜单
+    const closeMenu = (e) => {
+      if (!menu.contains(e.target)) {
+        menu.remove();
+        document.removeEventListener('click', closeMenu);
+      }
+    };
+    setTimeout(() => document.addEventListener('click', closeMenu), 0);
+  },
+
+  /**
+   * 删除单条消息
+   */
+  deleteMessage(messageEl) {
+    // 获取消息在数组中的索引
+    const allMessages = document.querySelectorAll('#chatContainer .message');
+    let index = -1;
+    allMessages.forEach((el, i) => {
+      if (el === messageEl) index = i;
+    });
+
+    if (index === -1 || index >= this.messages.length) {
+      showError('无法删除该消息');
+      return;
+    }
+
+    // 从数组中删除
+    this.messages.splice(index, 1);
+    Storage.saveMessages(this.messages);
+
+    // 从界面删除（带动画）
+    messageEl.style.transition = 'all 0.3s ease';
+    messageEl.style.opacity = '0';
+    messageEl.style.transform = 'translateX(-20px)';
+    setTimeout(() => {
+      messageEl.remove();
+      // 如果没有消息了，显示欢迎页
+      if (this.messages.length === 0) {
+        this.showWelcome();
+      }
+    }, 300);
+
+    this.showSaveToast('已删除');
   }
 };
 
