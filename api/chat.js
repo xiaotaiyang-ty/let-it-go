@@ -138,6 +138,12 @@ module.exports = async function handler(req, res) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6);
           if (data === '[DONE]') {
+            // 先保存对话，获取 conversation_id
+            const newConvId = await saveConversation(userId, messages, fullResponse, function_used, conversation_id);
+            // 发送 conversation_id 给前端
+            if (newConvId) {
+              res.write(`data: ${JSON.stringify({ conversation_id: newConvId })}\n\n`);
+            }
             res.write('data: [DONE]\n\n');
           } else {
             try {
@@ -170,9 +176,6 @@ module.exports = async function handler(req, res) {
       model_used: apiConfig.model
     });
 
-    // 保存对话到数据库
-    saveConversation(userId, messages, fullResponse, function_used, conversation_id);
-
   } catch (error) {
     console.error('对话错误:', error);
     if (!res.headersSent) {
@@ -184,13 +187,14 @@ module.exports = async function handler(req, res) {
 };
 
 /**
- * 保存对话到数据库（异步）
+ * 保存对话到数据库
  */
 async function saveConversation(userId, messages, aiResponse, functionUsed, conversationId) {
   try {
     const conversations = await getCollection('conversations');
 
     const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+    let newConversationId = conversationId;
 
     if (conversationId) {
       // 更新已有对话
@@ -214,15 +218,19 @@ async function saveConversation(userId, messages, aiResponse, functionUsed, conv
               ]
             }
           },
-          $set: { updated_at: new Date() }
+          $set: {
+            updated_at: new Date(),
+            last_message: aiResponse.substring(0, 100)
+          }
         }
       );
     } else {
       // 创建新对话
       const title = (lastUserMessage?.content || '新对话').substring(0, 30);
-      await conversations.insertOne({
+      const result = await conversations.insertOne({
         user_id: userId,
         title,
+        last_message: aiResponse.substring(0, 100),
         messages: [
           {
             role: 'user',
@@ -239,8 +247,12 @@ async function saveConversation(userId, messages, aiResponse, functionUsed, conv
         created_at: new Date(),
         updated_at: new Date()
       });
+      newConversationId = result.insertedId.toString();
     }
+
+    return newConversationId;
   } catch (error) {
     console.error('保存对话失败:', error);
+    return null;
   }
 }

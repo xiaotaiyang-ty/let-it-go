@@ -856,6 +856,39 @@ body {
     51%, 100% { opacity: 0; }
 }
 
+/* ============ 消息收藏按钮 ============ */
+.message-save-btn {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    margin-left: 8px;
+    background: white;
+    border: 1px solid var(--mint-200);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ai-message:hover .message-save-btn {
+    display: flex;
+}
+
+.message-save-btn:hover {
+    background: var(--mint-50);
+    color: var(--mint-500);
+    border-color: var(--mint-300);
+}
+
+.message-save-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
 /* ============ 生活关怀 ============ */
 .care-reminder {
     position: fixed;

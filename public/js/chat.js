@@ -116,10 +116,16 @@ const Chat = {
         this.scrollToBottom();
       },
       // onDone
-      () => {
+      (newConversationId) => {
         this.isStreaming = false;
         this.hideLoading();
         contentEl.innerHTML = this.formatContent(fullContent);
+
+        // 保存 conversation_id
+        if (newConversationId && !this.conversationId) {
+          this.conversationId = newConversationId;
+          Storage.setConversationId(newConversationId);
+        }
 
         // 保存消息
         this.messages.push({ role: 'assistant', content: fullContent });
@@ -181,10 +187,67 @@ const Chat = {
     contentDiv.innerHTML = isStreaming ? '' : this.formatContent(content);
 
     messageDiv.appendChild(contentDiv);
+
+    // AI 消息添加收藏按钮
+    if (role === 'assistant' && !isStreaming) {
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'message-save-btn';
+      saveBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+        </svg>
+        收藏
+      `;
+      saveBtn.onclick = (e) => {
+        e.stopPropagation();
+        this.saveSelectedText(content);
+      };
+      messageDiv.appendChild(saveBtn);
+    }
+
     container.appendChild(messageDiv);
 
     this.scrollToBottom();
     return messageDiv;
+  },
+
+  /**
+   * 收藏选中文本或整条消息
+   */
+  async saveSelectedText(fullContent) {
+    // 获取用户选中的文本
+    const selection = window.getSelection();
+    let textToSave = selection.toString().trim();
+
+    // 如果没有选中，收藏整条消息的前200字
+    if (!textToSave) {
+      textToSave = fullContent.substring(0, 200);
+      if (fullContent.length > 200) {
+        textToSave += '...';
+      }
+    }
+
+    if (!textToSave) {
+      showError('请先选中要收藏的文字');
+      return;
+    }
+
+    try {
+      await API.post('/api/quotes', {
+        quote: textToSave,
+        source: '来自对话'
+      });
+
+      // 显示收藏成功提示
+      const toast = document.getElementById('saveToast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+
+      // 清除选中
+      selection.removeAllRanges();
+    } catch (error) {
+      showError(error.message || '收藏失败');
+    }
   },
 
   /**

@@ -110,6 +110,7 @@ const API = {
    */
   async chatStream(messages, functionUsed, conversationId, onChunk, onDone, onError) {
     const url = `${CONFIG.API_BASE}/api/chat`;
+    let newConversationId = null;
 
     try {
       const response = await fetch(url, {
@@ -158,13 +159,16 @@ const API = {
           if (line.startsWith('data: ')) {
             const data = line.slice(6);
             if (data === '[DONE]') {
-              onDone();
+              onDone(newConversationId);
               return;
             }
             try {
               const json = JSON.parse(data);
               if (json.content) {
                 onChunk(json.content);
+              }
+              if (json.conversation_id) {
+                newConversationId = json.conversation_id;
               }
               if (json.error) {
                 onError(new Error(json.error));
@@ -177,7 +181,7 @@ const API = {
         }
       }
 
-      onDone();
+      onDone(newConversationId);
 
     } catch (error) {
       onError(error);
