@@ -72,13 +72,18 @@ module.exports = async function handler(req, res) {
     // 记录日志
     await logUserAction(userId, 'register', {});
 
+    // 获取免费额度配置
+    const FREE_DAILY_LIMIT = parseInt(process.env.FREE_DAILY_LIMIT) || 10;
+
     return res.status(201).json({
       success: true,
       message: '注册成功',
       token,
       user: {
         id: userId.toString(),
-        nickname
+        nickname,
+        free_usage_today: 0,
+        free_daily_limit: FREE_DAILY_LIMIT
       }
     });
 

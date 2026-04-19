@@ -57,6 +57,16 @@ module.exports = async function handler(req, res) {
     // 记录日志
     await logUserAction(user._id, 'login', {});
 
+    // 获取免费额度配置
+    const FREE_DAILY_LIMIT = parseInt(process.env.FREE_DAILY_LIMIT) || 10;
+
+    // 检查是否需要重置每日额度
+    const today = new Date().toDateString();
+    const resetDate = user.free_usage_reset_date
+      ? new Date(user.free_usage_reset_date).toDateString()
+      : null;
+    const freeUsageToday = resetDate === today ? (user.free_usage_today || 0) : 0;
+
     return res.status(200).json({
       success: true,
       message: '登录成功',
@@ -65,7 +75,8 @@ module.exports = async function handler(req, res) {
         id: user._id.toString(),
         nickname: user.nickname,
         use_own_api: user.use_own_api,
-        free_usage_today: user.free_usage_today || 0
+        free_usage_today: freeUsageToday,
+        free_daily_limit: FREE_DAILY_LIMIT
       }
     });
 
