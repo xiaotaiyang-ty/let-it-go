@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>不内耗 · 换个角度看问题</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 装饰背景 -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- 主布局 -->
+    <div class="app-layout">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">不内耗</h1>
+                <p class="tagline">换个角度看问题</p>
+            </div>
+
+            <!-- 用户信息 -->
+            <div class="user-info" id="userInfo">
+                <div class="user-avatar" id="userAvatar">🌿</div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">未登录</span>
+                    <span class="user-quota" id="userQuota">--</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="退出登录" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 金句卡片 -->
+            <div class="quote-card">
+                <div class="quote-mark">"</div>
+                <p class="quote-text" id="quoteText">世界上只有一种英雄主义，就是认清生活的真相后依然热爱它。</p>
+                <span class="quote-source" id="quoteSource">— 罗曼·罗兰</span>
+            </div>
+
+            <!-- 今日肯定 -->
+            <div class="affirmation-card">
+                <span class="affirmation-icon">✨</span>
+                <p class="affirmation-text" id="dailyAffirmation">今天也要对自己温柔一点</p>
+            </div>
+
+            <!-- 导航 -->
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <span>聊天</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>历史</span>
+                </a>
+                <a href="saved.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    </svg>
+                    <span>收藏</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span>设置</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>数据安全存储 🔒</p>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 聊天区域 -->
+            <div class="chat-area">
+                <div class="chat-container" id="chatContainer">
+                    <!-- 欢迎消息 -->
+                    <div class="welcome-section" id="welcomeSection">
+                        <div class="welcome-icon">🌿</div>
+                        <h2 class="welcome-title">有什么想说的？</h2>
+                        <p class="welcome-subtitle">我在听，随便聊聊吧</p>
+                    </div>
+                    <!-- 消息会动态添加到这里 -->
+                </div>
+
+                <!-- 加载指示器 -->
+                <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+                    <div class="loading-bubble">
+                        <span class="loading-text" id="loadingText">正在认真读你说的话</span>
+                        <span class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="input-area">
+                <div class="input-container">
+                    <textarea
+                        id="userInput"
+                        placeholder="把你的烦恼告诉我..."
+                        rows="1"
+                        maxlength="2000"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn" title="发送">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- 功能按钮 -->
+                <div class="action-buttons">
+                    <button class="action-btn perspective-btn" id="perspectiveBtn">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">帮我换位思考</span>
+                        <span class="btn-desc">站在对方角度看问题</span>
+                    </button>
+                    <button class="action-btn positive-btn" id="positiveBtn">
+                        <span class="btn-icon">☀️</span>
+                        <span class="btn-text">帮我停止灾难化</span>
+                        <span class="btn-desc">事情没那么糟糕</span>
+                    </button>
+                </div>
+
+                <!-- 新对话 -->
+                <button class="new-chat-btn" id="newChatBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    开始新对话
+                </button>
+            </div>
+        </main>
+
+        <!-- 右侧装饰区 -->
+        <aside class="decoration-panel">
+            <div class="deco-plant">🌱</div>
+            <div class="deco-text">
+                <p>你担心的事情</p>
+                <p class="highlight">90%</p>
+                <p>都不会发生</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast save-toast" id="saveToast">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+        </svg>
+        <span>已收藏</span>
+    </div>
+
+    <div class="toast farewell-toast" id="farewellToast">
+        <span id="farewellText">下次难受了再来找我 ☺️</span>
+    </div>
+
+    <div class="toast error-toast" id="errorToast">
+        <span id="errorText">出错了</span>
+    </div>
+
+    <!-- 生活关怀 -->
+    <div class="care-reminder" id="careReminder" style="display: none;">
+        <span class="care-icon">💭</span>
+        <span id="careText"></span>
+        <button class="care-close" id="careClose">✕</button>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div class="config-modal" id="authModal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h2 class="modal-title" id="authModalTitle">👋 欢迎来到不内耗</h2>
+            <p class="modal-desc" id="authModalDesc">登录后可以保存对话历史和收藏</p>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">登录</button>
+                <button class="auth-tab" data-tab="register">注册</button>
+            </div>
+
+            <div class="modal-form" id="authForm">
+                <div class="form-group">
+                    <label class="form-label">昵称</label>
+                    <input type="text" class="form-input" id="authNickname"
+                           placeholder="输入你的昵称" maxlength="20">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">密码</label>
+                    <input type="password" class="form-input" id="authPassword"
+                           placeholder="输入密码（至少6位）" maxlength="50">
+                </div>
+
+                <p class="auth-error" id="authError" style="display: none;"></p>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="authSubmitBtn">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/quotes.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/care.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收藏金句 - 不内耗</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .saved-list {
+            padding: 32px 48px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .saved-item {
+            padding: 24px;
+            background: linear-gradient(135deg, var(--mint-50) 0%, white 100%);
+            border: 1px solid var(--mint-100);
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+        .saved-quote {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .saved-source {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .saved-delete {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-full);
+            color: var(--text-muted);
+            cursor: pointer;
+            opacity: 0;
+            transition: all var(--transition-fast);
+        }
+        .saved-item:hover .saved-delete {
+            opacity: 1;
+        }
+        .saved-delete:hover {
+            background: #fef2f2;
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--text-muted);
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">不内耗</h1>
+                <p class="tagline">换个角度看问题</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <span>聊天</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>历史</span>
+                </a>
+                <a href="saved.html" class="nav-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    </svg>
+                    <span>收藏</span>
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span>设置</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="saved-list" id="savedList">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📚</div>
+                    <p>还没有收藏金句</p>
+                    <p style="margin-top: 8px; font-size: 0.9rem;">在对话中点击收藏按钮保存喜欢的句子</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // 检查登录
+        if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
+            window.location.href = 'index.html';
+        }
+
+        // 加载收藏
+        async function loadSaved() {
+            try {
+                const data = await API.get('/api/quotes');
+                const list = document.getElementById('savedList');
+
+                if (!data.quotes || data.quotes.length === 0) {
+                    return;
+                }
+
+                document.getElementById('emptyState').style.display = 'none';
+
+                data.quotes.forEach(quote => {
+                    const item = document.createElement('div');
+                    item.className = 'saved-item';
+                    item.innerHTML = `
+                        <p class="saved-quote">"${escapeHtml(quote.quote)}"</p>
+                        <span class="saved-source">— ${escapeHtml(quote.source)}</span>
+                        <button class="saved-delete" onclick="deleteSaved('${quote.id}', this)" title="取消收藏">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    `;
+                    list.appendChild(item);
+                });
+            } catch (error) {
+                console.error('加载收藏失败:', error);
+            }
+        }
+
+        async function deleteSaved(id, btn) {
+            if (!confirm('确定要取消收藏吗？')) return;
+
+            try {
+                await API.delete(`/api/quotes/${id}`);
+                btn.closest('.saved-item').remove();
+
+                // 检查是否为空
+                const items = document.querySelectorAll('.saved-item');
+                if (items.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                }
+            } catch (error) {
+                alert('操作失败: ' + error.message);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadSaved();
+    </script>
+</body>
+</html>

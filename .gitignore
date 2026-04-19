@@ -1,0 +1,6 @@
+# 不内耗小软件 - 部署版
+
+node_modules/
+.env
+.env.local
+.vercel/

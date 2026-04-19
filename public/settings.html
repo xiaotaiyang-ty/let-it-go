@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - 不内耗</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .settings-container {
+            padding: 32px 48px;
+            max-width: 600px;
+        }
+        .settings-section {
+            margin-bottom: 32px;
+        }
+        .settings-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        .settings-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .settings-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--cream-100);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all var(--transition-fast);
+        }
+        .settings-input:focus {
+            outline: none;
+            border-color: var(--mint-300);
+        }
+        .settings-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--cream-100);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .settings-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--cream-100);
+            border-radius: var(--radius-md);
+        }
+        .toggle-label {
+            display: flex;
+            flex-direction: column;
+        }
+        .toggle-title {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .toggle-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            background: var(--text-light);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .toggle-switch.active {
+            background: var(--mint-400);
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+        .quota-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--mint-50) 0%, var(--warm-100) 100%);
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+        }
+        .quota-icon {
+            font-size: 2rem;
+        }
+        .quota-text {
+            flex: 1;
+        }
+        .quota-title {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .quota-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .save-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, var(--mint-400) 0%, var(--mint-500) 100%);
+            border: none;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+        .own-api-fields {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--cream-50);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-light);
+        }
+        .own-api-fields.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">不内耗</h1>
+                <p class="tagline">换个角度看问题</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <span>聊天</span>
+                </a>
+                <a href="history.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>历史</span>
+                </a>
+                <a href="saved.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    </svg>
+                    <span>收藏</span>
+                </a>
+                <a href="settings.html" class="nav-item active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span>设置</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="settings-container">
+                <div class="settings-section">
+                    <h2 class="settings-title">💫 使用额度</h2>
+                    <div class="quota-info">
+                        <span class="quota-icon">🎁</span>
+                        <div class="quota-text">
+                            <div class="quota-title">今日剩余：<span id="quotaRemaining">--</span>/<span id="quotaTotal">--</span> 次</div>
+                            <div class="quota-desc">每日免费额度，0点重置</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h2 class="settings-title">🔑 API 配置</h2>
+
+                    <div class="settings-toggle">
+                        <div class="toggle-label">
+                            <span class="toggle-title">使用自己的 API Key</span>
+                            <span class="toggle-desc">不消耗免费额度，可自选模型</span>
+                        </div>
+                        <div class="toggle-switch" id="useOwnApiToggle" onclick="toggleOwnApi()"></div>
+                    </div>
+
+                    <div class="own-api-fields" id="ownApiFields">
+                        <div class="settings-group">
+                            <label class="settings-label">API Key</label>
+                            <input type="password" class="settings-input" id="ownApiKey"
+                                   placeholder="输入你的 API Key">
+                        </div>
+
+                        <div class="settings-group">
+                            <label class="settings-label">模型</label>
+                            <select class="settings-select" id="ownApiModel">
+                                <option value="deepseek-v3-2-251201">DeepSeek V3（推荐）</option>
+                                <option value="deepseek-r1-250120">DeepSeek R1</option>
+                                <option value="gpt-4o">GPT-4o</option>
+                                <option value="gpt-4o-mini">GPT-4o Mini</option>
+                                <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-group">
+                            <label class="settings-label">API 端点（可选）</label>
+                            <input type="url" class="settings-input" id="ownApiEndpoint"
+                                   placeholder="留空使用默认端点">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="save-btn" onclick="saveSettings()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 13l4 4L19 7"/>
+                    </svg>
+                    保存设置
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast save-toast" id="saveToast">
+        <span>已保存</span>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // 检查登录
+        if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
+            window.location.href = 'index.html';
+        }
+
+        let settings = {};
+
+        // 加载设置
+        async function loadSettings() {
+            try {
+                const data = await API.get('/api/settings');
+                settings = data.settings;
+
+                // 更新 UI
+                document.getElementById('quotaRemaining').textContent =
+                    settings.free_daily_limit - settings.free_usage_today;
+                document.getElementById('quotaTotal').textContent = settings.free_daily_limit;
+
+                if (settings.use_own_api) {
+                    document.getElementById('useOwnApiToggle').classList.add('active');
+                    document.getElementById('ownApiFields').classList.add('show');
+                }
+
+                if (settings.own_api_model) {
+                    document.getElementById('ownApiModel').value = settings.own_api_model;
+                }
+            } catch (error) {
+                console.error('加载设置失败:', error);
+            }
+        }
+
+        function toggleOwnApi() {
+            const toggle = document.getElementById('useOwnApiToggle');
+            const fields = document.getElementById('ownApiFields');
+            toggle.classList.toggle('active');
+            fields.classList.toggle('show');
+        }
+
+        async function saveSettings() {
+            const useOwnApi = document.getElementById('useOwnApiToggle').classList.contains('active');
+            const ownApiKey = document.getElementById('ownApiKey').value.trim();
+            const ownApiModel = document.getElementById('ownApiModel').value;
+            const ownApiEndpoint = document.getElementById('ownApiEndpoint').value.trim();
+
+            try {
+                await API.put('/api/settings', {
+                    use_own_api: useOwnApi,
+                    own_api_key: ownApiKey || undefined,
+                    own_api_model: ownApiModel,
+                    own_api_endpoint: ownApiEndpoint || undefined
+                });
+
+                // 显示保存成功
+                const toast = document.getElementById('saveToast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            } catch (error) {
+                alert('保存失败: ' + error.message);
+            }
+        }
+
+        loadSettings();
+    </script>
+</body>
+</html>
