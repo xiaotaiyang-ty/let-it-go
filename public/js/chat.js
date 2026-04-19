@@ -665,7 +665,7 @@ const Chat = {
 
     try {
       const token = API.getToken();
-      const response = await fetch(`${API.baseURL}/api/mystery-box`, {
+      const response = await fetch(`${API.baseURL}/api/mysterybox`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
