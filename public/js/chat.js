@@ -8,6 +8,7 @@ const Chat = {
   isStreaming: false,  // 是否正在流式输出
   selectedText: '',    // 当前选中的文本
   selectedMessageContent: null, // 选中文本所在消息的完整内容
+  userScrolledUp: false, // 用户是否主动向上滚动了
 
   /**
    * 初始化
@@ -42,7 +43,7 @@ const Chat = {
       input.style.height = Math.min(input.scrollHeight, 120) + 'px';
     });
 
-    // 功能按钮
+    // 功能按钮 - 基于已有对话或输入框内容
     document.getElementById('perspectiveBtn').addEventListener('click', () => {
       this.sendWithFunction('换位思考');
     });
@@ -54,6 +55,16 @@ const Chat = {
     // 新对话按钮
     document.getElementById('newChatBtn').addEventListener('click', () => {
       this.startNewChat();
+    });
+
+    // 监听聊天区域滚动，判断用户是否主动向上滚动
+    const container = document.getElementById('chatContainer');
+    container.addEventListener('scroll', () => {
+      if (this.isStreaming) {
+        // 检查是否滚动到底部附近（允许50px误差）
+        const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+        this.userScrolledUp = !isAtBottom;
+      }
     });
   },
 
@@ -171,18 +182,31 @@ const Chat = {
     const input = document.getElementById('userInput');
     const content = input.value.trim();
 
-    if (!content || this.isStreaming) return;
+    // 如果没有输入内容，且没有历史消息，提示用户
+    if (!content && this.messages.length === 0) {
+      showError('请先输入你的情况');
+      input.focus();
+      return;
+    }
 
-    // 清空输入框
-    input.value = '';
-    input.style.height = 'auto';
+    if (this.isStreaming) return;
 
-    // 隐藏欢迎区域
-    this.hideWelcome();
+    // 重置滚动状态
+    this.userScrolledUp = false;
 
-    // 添加用户消息
-    this.messages.push({ role: 'user', content });
-    this.appendMessage('user', content);
+    // 如果有输入内容，添加用户消息
+    if (content) {
+      // 清空输入框
+      input.value = '';
+      input.style.height = 'auto';
+
+      // 隐藏欢迎区域
+      this.hideWelcome();
+
+      // 添加用户消息
+      this.messages.push({ role: 'user', content });
+      this.appendMessage('user', content);
+    }
 
     // 显示加载
     this.showLoading();
@@ -202,11 +226,15 @@ const Chat = {
       (chunk) => {
         fullContent += chunk;
         contentEl.innerHTML = this.formatContent(fullContent) + '<span class="streaming-cursor">|</span>';
-        this.scrollToBottom();
+        // 智能滚动：只有用户没有主动向上滚动时才自动滚动
+        if (!this.userScrolledUp) {
+          this.scrollToBottom();
+        }
       },
       // onDone
       (newConversationId) => {
         this.isStreaming = false;
+        this.userScrolledUp = false;
         this.hideLoading();
 
         // 渲染最终内容并添加收藏按钮
@@ -224,10 +252,14 @@ const Chat = {
 
         // 刷新用户额度显示
         Auth.refreshUserInfo();
+
+        // 完成后滚动到底部
+        this.scrollToBottom();
       },
       // onError
       (error) => {
         this.isStreaming = false;
+        this.userScrolledUp = false;
         this.hideLoading();
         contentEl.innerHTML = `<span style="color: #ef4444;">抱歉，出了点问题：${error.message}</span>`;
         showError(error.message);
@@ -240,12 +272,104 @@ const Chat = {
    */
   sendWithFunction(functionName) {
     const input = document.getElementById('userInput');
-    if (!input.value.trim()) {
-      showError('请先输入你的情况，再点击功能按钮');
+    const inputContent = input.value.trim();
+
+    // 如果输入框有内容，先把内容作为用户消息添加
+    if (inputContent) {
+      // 清空输入框
+      input.value = '';
+      input.style.height = 'auto';
+
+      // 隐藏欢迎区域
+      this.hideWelcome();
+
+      // 添加用户消息
+      this.messages.push({ role: 'user', content: inputContent });
+      this.appendMessage('user', inputContent);
+      Storage.saveMessages(this.messages);
+    }
+
+    // 检查是否有对话可以分析
+    if (this.messages.length === 0) {
+      showError('请先聊聊你的情况，再使用这个功能');
       input.focus();
       return;
     }
-    this.sendMessage(functionName);
+
+    // 基于已有对话发送功能请求
+    this.sendFunctionRequest(functionName);
+  },
+
+  /**
+   * 发送功能分析请求（基于已有对话）
+   */
+  async sendFunctionRequest(functionName) {
+    if (!Auth.isLoggedIn()) {
+      Auth.showLoginModal();
+      return;
+    }
+
+    if (this.isStreaming) return;
+
+    // 重置滚动状态
+    this.userScrolledUp = false;
+
+    // 显示加载
+    this.showLoading();
+    this.isStreaming = true;
+
+    // 准备 AI 消息容器
+    const aiMessageEl = this.appendMessage('assistant', '', true);
+    const contentEl = aiMessageEl.querySelector('.message-content');
+    let fullContent = '';
+
+    // 发送请求
+    await API.chatStream(
+      this.messages.map(m => ({ role: m.role, content: m.content })),
+      functionName,
+      this.conversationId,
+      // onChunk
+      (chunk) => {
+        fullContent += chunk;
+        contentEl.innerHTML = this.formatContent(fullContent) + '<span class="streaming-cursor">|</span>';
+        if (!this.userScrolledUp) {
+          this.scrollToBottom();
+        }
+      },
+      // onDone
+      (newConversationId) => {
+        this.isStreaming = false;
+        this.userScrolledUp = false;
+        this.hideLoading();
+
+        // 渲染最终内容并添加收藏按钮
+        this.finalizeMessage(aiMessageEl, fullContent);
+
+        // 保存 conversation_id
+        if (newConversationId && !this.conversationId) {
+          this.conversationId = newConversationId;
+          Storage.setConversationId(newConversationId);
+        }
+
+        // 保存消息
+        this.messages.push({ role: 'assistant', content: fullContent });
+        Storage.saveMessages(this.messages);
+
+        // 刷新用户额度显示
+        Auth.refreshUserInfo();
+
+        // 完成后滚动到底部
+        this.scrollToBottom();
+      },
+      // onError
+      (error) => {
+        this.isStreaming = false;
+        this.userScrolledUp = false;
+        this.hideLoading();
+        contentEl.innerHTML = `<span style="color: #ef4444;">抱歉，出了点问题：${error.message}</span>`;
+        showError(error.message);
+      }
+    );
   },
 
   /**
