@@ -62,6 +62,11 @@ const Chat = {
       this.clearCurrentMessages();
     });
 
+    // 惊喜盲盒按钮
+    document.getElementById('mysteryBoxBtn').addEventListener('click', () => {
+      this.openMysteryBox();
+    });
+
     // 监听聊天区域滚动，判断用户是否主动向上滚动
     const container = document.getElementById('chatContainer');
     container.addEventListener('scroll', () => {
@@ -604,6 +609,262 @@ const Chat = {
   scrollToBottom() {
     const container = document.getElementById('chatContainer');
     container.scrollTop = container.scrollHeight;
+  },
+
+  /**
+   * 打开惊喜盲盒
+   */
+  async openMysteryBox() {
+    if (!Auth.isLoggedIn()) {
+      Auth.showLoginModal();
+      return;
+    }
+
+    // 检查是否有对话
+    const input = document.getElementById('userInput');
+    const inputContent = input.value.trim();
+
+    // 如果输入框有内容，先把内容作为用户消息添加
+    if (inputContent) {
+      input.value = '';
+      input.style.height = 'auto';
+      this.hideWelcome();
+      this.messages.push({ role: 'user', content: inputContent });
+      this.appendMessage('user', inputContent);
+      Storage.saveMessages(this.messages);
+    }
+
+    if (this.messages.length === 0) {
+      showError('先聊聊天吧，让我了解你的情况');
+      input.focus();
+      return;
+    }
+
+    if (this.isStreaming) return;
+
+    // 重置滚动状态
+    this.userScrolledUp = false;
+
+    // 显示加载
+    this.showMysteryBoxLoading();
+    this.isStreaming = true;
+
+    // 创建盲盒卡片容器
+    const boxCard = this.createMysteryBoxCard();
+    const contentEl = boxCard.querySelector('.mystery-box-content .message-content');
+    let fullContent = '';
+    let promptInfo = null;
+
+    try {
+      const token = Auth.getToken();
+      const response = await fetch(`${API.baseURL}/api/mystery-box`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          messages: this.messages.map(m => ({ role: m.role, content: m.content })),
+          conversation_id: this.conversationId
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '请求失败');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              // 完成
+              this.finalizeMysteryBox(boxCard, promptInfo, fullContent);
+            } else {
+              try {
+                const json = JSON.parse(data);
+
+                // 处理 prompt 信息
+                if (json.type === 'prompt_info') {
+                  promptInfo = json.prompt;
+                  this.updateMysteryBoxHeader(boxCard, promptInfo);
+                }
+
+                // 处理内容
+                if (json.content) {
+                  fullContent += json.content;
+                  contentEl.innerHTML = this.formatContent(fullContent) + '<span class="streaming-cursor">|</span>';
+                  if (!this.userScrolledUp) {
+                    this.scrollToBottom();
+                  }
+                }
+
+                // 处理错误
+                if (json.error) {
+                  throw new Error(json.error);
+                }
+              } catch (e) {
+                if (e.message !== 'Unexpected end of JSON input') {
+                  console.error('Parse error:', e);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      this.isStreaming = false;
+      this.userScrolledUp = false;
+      this.hideMysteryBoxLoading();
+      Auth.refreshUserInfo();
+      this.scrollToBottom();
+
+    } catch (error) {
+      this.isStreaming = false;
+      this.userScrolledUp = false;
+      this.hideMysteryBoxLoading();
+      contentEl.innerHTML = `<span style="color: #ef4444;">抱歉，出了点问题：${error.message}</span>`;
+      showError(error.message);
+    }
+  },
+
+  /**
+   * 创建盲盒卡片
+   */
+  createMysteryBoxCard() {
+    const container = document.getElementById('chatContainer');
+
+    const card = document.createElement('div');
+    card.className = 'mystery-box-card mystery-box-opening';
+    card.innerHTML = `
+      <div class="mystery-box-header">
+        <div class="mystery-box-title">
+          <span class="mystery-box-emoji">🎁</span>
+          <span class="mystery-box-category">正在开盒...</span>
+        </div>
+        <button class="mystery-box-toggle" style="display: none;">
+          <span>－</span> 收起
+        </button>
+      </div>
+      <div class="mystery-box-summary"></div>
+      <div class="mystery-box-question" style="display: none;">
+        <p></p>
+      </div>
+      <div class="mystery-box-content">
+        <div class="message-content"></div>
+      </div>
+      <div class="mystery-box-actions" style="display: none;">
+        <button class="mystery-box-action-btn primary" data-action="reopen">
+          🔄 再开一个
+        </button>
+        <button class="mystery-box-action-btn" data-action="save">
+          ✨ 收藏
+        </button>
+      </div>
+    `;
+
+    container.appendChild(card);
+    this.scrollToBottom();
+    return card;
+  },
+
+  /**
+   * 更新盲盒卡片头部
+   */
+  updateMysteryBoxHeader(card, promptInfo) {
+    card.classList.remove('mystery-box-opening');
+
+    const emoji = card.querySelector('.mystery-box-emoji');
+    const category = card.querySelector('.mystery-box-category');
+    const question = card.querySelector('.mystery-box-question');
+
+    emoji.textContent = promptInfo.categoryEmoji;
+    category.textContent = promptInfo.categoryName;
+    category.style.color = promptInfo.color;
+
+    question.style.display = 'block';
+    question.querySelector('p').textContent = promptInfo.displayQuestion;
+
+    // 设置卡片边框颜色
+    card.style.borderColor = promptInfo.color;
+  },
+
+  /**
+   * 完成盲盒卡片
+   */
+  finalizeMysteryBox(card, promptInfo, content) {
+    const contentEl = card.querySelector('.mystery-box-content .message-content');
+    contentEl.innerHTML = this.formatContent(content);
+
+    // 显示操作按钮
+    const actions = card.querySelector('.mystery-box-actions');
+    actions.style.display = 'flex';
+
+    // 显示收起按钮
+    const toggle = card.querySelector('.mystery-box-toggle');
+    toggle.style.display = 'flex';
+
+    // 设置摘要（取前50字）
+    const summary = card.querySelector('.mystery-box-summary');
+    let summaryText = content.replace(/[#*\n]/g, ' ').substring(0, 60);
+    if (content.length > 60) summaryText += '...';
+    summary.textContent = `「${summaryText}」`;
+
+    // 绑定事件
+    toggle.onclick = () => {
+      card.classList.toggle('collapsed');
+      toggle.innerHTML = card.classList.contains('collapsed')
+        ? '<span>＋</span> 展开'
+        : '<span>－</span> 收起';
+    };
+
+    // 再开一个
+    const reopenBtn = actions.querySelector('[data-action="reopen"]');
+    reopenBtn.onclick = () => {
+      this.openMysteryBox();
+    };
+
+    // 收藏
+    const saveBtn = actions.querySelector('[data-action="save"]');
+    saveBtn.onclick = () => {
+      // 收藏核心内容（取前200字）
+      let textToSave = `【${promptInfo.categoryName}】${promptInfo.displayQuestion}\n\n`;
+      textToSave += content.substring(0, 200);
+      if (content.length > 200) textToSave += '...';
+      this.saveQuote(textToSave);
+    };
+  },
+
+  /**
+   * 显示盲盒加载
+   */
+  showMysteryBoxLoading() {
+    const loadingTexts = [
+      "正在为你抽取视角...",
+      "盲盒正在打开...",
+      "看看今天遇见什么...",
+      "惊喜即将揭晓..."
+    ];
+    const text = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+    document.getElementById('loadingText').textContent = text;
+    document.getElementById('loadingIndicator').style.display = 'block';
+  },
+
+  /**
+   * 隐藏盲盒加载
+   */
+  hideMysteryBoxLoading() {
+    document.getElementById('loadingIndicator').style.display = 'none';
   }
 };
 

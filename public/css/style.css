@@ -624,6 +624,11 @@ body {
     margin-top: 20px;
 }
 
+/* 三卡片布局 */
+.action-buttons-three {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
 .action-btn {
     display: flex;
     flex-direction: column;
@@ -650,6 +655,43 @@ body {
 .positive-btn:hover {
     border-color: var(--warm-300);
     background: var(--warm-100);
+}
+
+/* 盲盒按钮特殊样式 */
+.mystery-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.mystery-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.mystery-btn:hover::before {
+    left: 100%;
+}
+
+.mystery-btn:hover {
+    border-color: #fbbf24;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+}
+
+.mystery-btn .btn-icon {
+    animation: mysteryShake 2s ease-in-out infinite;
+}
+
+@keyframes mysteryShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
 }
 
 .btn-icon {
@@ -917,6 +959,194 @@ body {
 .message-save-btn svg {
     width: 14px;
     height: 14px;
+}
+
+/* ============ 惊喜盲盒卡片 ============ */
+.mystery-box-card {
+    margin: 16px 0;
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 2px solid #fbbf24;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.15);
+}
+
+.mystery-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border-bottom: 1px solid #fde68a;
+}
+
+.mystery-box-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.mystery-box-emoji {
+    font-size: 1.3rem;
+}
+
+.mystery-box-category {
+    padding: 4px 10px;
+    background: white;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.mystery-box-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.mystery-box-toggle:hover {
+    background: var(--mint-50);
+    color: var(--mint-500);
+}
+
+.mystery-box-question {
+    padding: 16px 20px;
+    background: #fffef5;
+    border-bottom: 1px solid #fef3c7;
+}
+
+.mystery-box-question p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.mystery-box-question p::before {
+    content: '💡 ';
+}
+
+.mystery-box-content {
+    padding: 20px;
+}
+
+.mystery-box-content .message-content {
+    max-width: 100%;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.mystery-box-insight {
+    margin-top: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--mint-50) 0%, #f0fdf4 100%);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--mint-400);
+}
+
+.mystery-box-insight p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.mystery-box-insight p::before {
+    content: '✨ 这个视角想告诉你：';
+    display: block;
+    font-weight: 600;
+    color: var(--mint-500);
+    margin-bottom: 8px;
+}
+
+.mystery-box-actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-light);
+    background: #fafaf8;
+}
+
+.mystery-box-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.mystery-box-action-btn:hover {
+    background: var(--mint-50);
+    border-color: var(--mint-300);
+    color: var(--mint-500);
+}
+
+.mystery-box-action-btn.primary {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border-color: #f59e0b;
+    color: white;
+}
+
+.mystery-box-action-btn.primary:hover {
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+/* 盲盒卡片收起状态 */
+.mystery-box-card.collapsed .mystery-box-question,
+.mystery-box-card.collapsed .mystery-box-content,
+.mystery-box-card.collapsed .mystery-box-actions {
+    display: none;
+}
+
+.mystery-box-card.collapsed .mystery-box-header {
+    border-bottom: none;
+}
+
+.mystery-box-summary {
+    display: none;
+    padding: 0 20px 16px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.mystery-box-card.collapsed .mystery-box-summary {
+    display: block;
+}
+
+/* 盲盒开盒动画 */
+@keyframes boxShake {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(-3deg); }
+    20% { transform: rotate(3deg); }
+    30% { transform: rotate(-3deg); }
+    40% { transform: rotate(3deg); }
+    50% { transform: rotate(0deg); }
+}
+
+.mystery-box-opening .mystery-box-emoji {
+    animation: boxShake 0.5s ease;
 }
 
 /* ============ 选中文字工具条 ============ */
@@ -1202,7 +1432,8 @@ body {
 }
 
 @media (max-width: 600px) {
-    .action-buttons {
+    .action-buttons,
+    .action-buttons-three {
         grid-template-columns: 1fr;
     }
 
