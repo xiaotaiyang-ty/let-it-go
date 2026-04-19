@@ -58,6 +58,12 @@
             font-size: 0.95rem;
             cursor: pointer;
         }
+        .settings-hint {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
         .settings-toggle {
             display: flex;
             align-items: center;
@@ -231,26 +237,25 @@
 
                     <div class="own-api-fields" id="ownApiFields">
                         <div class="settings-group">
+                            <label class="settings-label">API 端点</label>
+                            <input type="url" class="settings-input" id="ownApiEndpoint"
+                                   placeholder="https://api.openai.com/v1/chat/completions"
+                                   value="https://ark.cn-beijing.volces.com/api/v3/chat/completions">
+                            <span class="settings-hint">不同服务商的请求地址不同</span>
+                        </div>
+
+                        <div class="settings-group">
                             <label class="settings-label">API Key</label>
                             <input type="password" class="settings-input" id="ownApiKey"
-                                   placeholder="输入你的 API Key">
+                                   placeholder="sk-xxxx 或你的 API Key">
                         </div>
 
                         <div class="settings-group">
-                            <label class="settings-label">模型</label>
-                            <select class="settings-select" id="ownApiModel">
-                                <option value="deepseek-v3-2-251201">DeepSeek V3（推荐）</option>
-                                <option value="deepseek-r1-250120">DeepSeek R1</option>
-                                <option value="gpt-4o">GPT-4o</option>
-                                <option value="gpt-4o-mini">GPT-4o Mini</option>
-                                <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</option>
-                            </select>
-                        </div>
-
-                        <div class="settings-group">
-                            <label class="settings-label">API 端点（可选）</label>
-                            <input type="url" class="settings-input" id="ownApiEndpoint"
-                                   placeholder="留空使用默认端点">
+                            <label class="settings-label">模型名称</label>
+                            <input type="text" class="settings-input" id="ownApiModel"
+                                   placeholder="gpt-4o / deepseek-chat / claude-3-5-sonnet..."
+                                   value="deepseek-v3-2-251201">
+                            <span class="settings-hint">填写你 API 支持的模型 ID</span>
                         </div>
                     </div>
                 </div>
