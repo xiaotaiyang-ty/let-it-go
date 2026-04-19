@@ -106,35 +106,35 @@ const Chat = {
 
     // 发送请求
     await API.chatStream(
-      this.messages.map(m => ({ role: m.role, content: m.content })),
-      functionUsed,
-      this.conversationId,
-      // onChunk
-      (chunk) => {
-        fullContent += chunk;
-        contentEl.innerHTML = this.formatContent(fullContent) + '<span class="streaming-cursor">|</span>';
-        this.scrollToBottom();
-      },
-      // onDone
-      () => {
-        this.isStreaming = false;
-        this.hideLoading();
-        contentEl.innerHTML = this.formatContent(fullContent);
+        this.messages.map(m => ({ role: m.role, content: m.content })),
+        functionUsed,
+        this.conversationId,
+        // onChunk
+        (chunk) => {
+          fullContent += chunk;
+          contentEl.innerHTML = this.formatContent(fullContent) + '<span class="streaming-cursor">|</span>';
+          this.scrollToBottom();
+        },
+        // onDone
+        () => {
+          this.isStreaming = false;
+          this.hideLoading();
+          contentEl.innerHTML = this.formatContent(fullContent);
 
-        // 保存消息
-        this.messages.push({ role: 'assistant', content: fullContent });
-        Storage.saveMessages(this.messages);
+          // 保存消息
+          this.messages.push({ role: 'assistant', content: fullContent });
+          Storage.saveMessages(this.messages);
 
-        // 刷新用户额度显示
-        Auth.refreshUserInfo();
-      },
-      // onError
-      (error) => {
-        this.isStreaming = false;
-        this.hideLoading();
-        contentEl.innerHTML = `<span style="color: #ef4444;">抱歉，出了点问题：${error.message}</span>`;
-        showError(error.message);
-      }
+          // 刷新用户额度显示
+          Auth.refreshUserInfo();
+        },
+        // onError
+        (error) => {
+          this.isStreaming = false;
+          this.hideLoading();
+          contentEl.innerHTML = `<span style="color: #ef4444;">抱歉，出了点问题：${error.message}</span>`;
+          showError(error.message);
+        }
     );
   },
 
@@ -175,10 +175,26 @@ const Chat = {
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
+    messageDiv.style.position = 'relative';
+
+    // 为 AI 消息添加收藏按钮
+    if (role === 'assistant') {
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'message-actions';
+      actionsDiv.innerHTML = `
+        <button class="save-btn" title="收藏这条回复" onclick="Chat.saveQuote(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+          </svg>
+        </button>
+      `;
+      messageDiv.appendChild(actionsDiv);
+    }
 
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
     contentDiv.innerHTML = isStreaming ? '' : this.formatContent(content);
+    contentDiv.dataset.content = content; // 存储原始内容用于收藏
 
     messageDiv.appendChild(contentDiv);
     container.appendChild(messageDiv);
@@ -194,15 +210,15 @@ const Chat = {
     if (!text) return '';
 
     return text
-      // 标题
-      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-      // 粗体
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      // 斜体
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      // 换行
-      .replace(/\n/g, '<br>');
+        // 标题
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        // 粗体
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // 斜体
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        // 换行
+        .replace(/\n/g, '<br>');
   },
 
   /**
@@ -258,6 +274,62 @@ const Chat = {
   scrollToBottom() {
     const container = document.getElementById('chatContainer');
     container.scrollTop = container.scrollHeight;
+  },
+
+  /**
+   * 收藏金句
+   */
+  async saveQuote(btn) {
+    if (!Auth.isLoggedIn()) {
+      Auth.showLoginModal();
+      return;
+    }
+
+    // 获取消息内容
+    const messageEl = btn.closest('.ai-message');
+    const contentEl = messageEl.querySelector('.message-content');
+    const content = contentEl.dataset.content || contentEl.innerText;
+
+    // 检查是否已收藏
+    if (btn.classList.contains('saved')) {
+      return;
+    }
+
+    try {
+      const result = await API.post('/api/quotes', {
+        quote: content,
+        source: 'AI回复'
+      });
+
+      // 更新按钮状态
+      btn.classList.add('saved');
+      btn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--warm-orange)" stroke="var(--warm-orange)" stroke-width="2">
+          <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+        </svg>
+      `;
+
+      // 显示成功提示
+      this.showSaveToast();
+    } catch (error) {
+      if (error.message === '已经收藏过了') {
+        btn.classList.add('saved');
+      } else {
+        showError('收藏失败: ' + error.message);
+      }
+    }
+  },
+
+  /**
+   * 显示收藏成功提示
+   */
+  showSaveToast() {
+    const toast = document.getElementById('saveToast');
+    toast.classList.add('show');
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2000);
   }
 };
 
