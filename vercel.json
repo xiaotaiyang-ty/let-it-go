@@ -13,12 +13,5 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/(.*)", "dest": "/public/$1" }
-  ],
-  "env": {
-    "MONGODB_URI": "@mongodb_uri",
-    "JWT_SECRET": "@jwt_secret",
-    "AI_API_KEY": "@ai_api_key",
-    "AI_API_ENDPOINT": "@ai_api_endpoint",
-    "AI_MODEL": "@ai_model"
-  }
+  ]
 }
