@@ -74,6 +74,57 @@ const Auth = {
         this.logout();
       }
     });
+
+    // 头像选择
+    this.bindAvatarEvents();
+  },
+
+  /**
+   * 绑定头像选择事件
+   */
+  bindAvatarEvents() {
+    const avatarEl = document.getElementById('userAvatar');
+    const avatarModal = document.getElementById('avatarModal');
+    const avatarGrid = document.getElementById('avatarGrid');
+    const avatarCloseBtn = document.getElementById('avatarCloseBtn');
+
+    if (!avatarEl || !avatarModal) return;
+
+    // 点击头像打开选择弹窗
+    avatarEl.addEventListener('click', () => {
+      avatarModal.style.display = 'flex';
+      // 标记当前选中
+      const currentAvatar = localStorage.getItem('userAvatar') || '🌱';
+      avatarGrid.querySelectorAll('.avatar-option').forEach(opt => {
+        opt.classList.toggle('selected', opt.dataset.avatar === currentAvatar);
+      });
+    });
+
+    // 选择头像
+    avatarGrid.addEventListener('click', (e) => {
+      const option = e.target.closest('.avatar-option');
+      if (option) {
+        const avatar = option.dataset.avatar;
+        localStorage.setItem('userAvatar', avatar);
+        avatarEl.textContent = avatar;
+        avatarModal.style.display = 'none';
+      }
+    });
+
+    // 关闭弹窗
+    avatarCloseBtn.addEventListener('click', () => {
+      avatarModal.style.display = 'none';
+    });
+
+    avatarModal.querySelector('.modal-overlay').addEventListener('click', () => {
+      avatarModal.style.display = 'none';
+    });
+
+    // 加载保存的头像
+    const savedAvatar = localStorage.getItem('userAvatar');
+    if (savedAvatar) {
+      avatarEl.textContent = savedAvatar;
+    }
   },
 
   /**

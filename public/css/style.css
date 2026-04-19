@@ -1126,6 +1126,13 @@ body {
     background: var(--mint-100);
     border-radius: var(--radius-full);
     font-size: 1.2rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.user-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
 }
 
 .user-details {
@@ -1219,4 +1226,78 @@ body {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* ============ 头像选择弹窗 ============ */
+.avatar-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.avatar-content {
+    text-align: center;
+    padding: 24px;
+    max-width: 320px;
+}
+
+.avatar-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.avatar-option {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    background: var(--mint-50);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.avatar-option:hover {
+    background: var(--mint-100);
+    border-color: var(--mint-300);
+    transform: scale(1.1);
+}
+
+.avatar-option.selected {
+    background: var(--mint-200);
+    border-color: var(--mint-500);
+}
+
+.avatar-close-btn {
+    padding: 10px 24px;
+    background: var(--cream-100);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.avatar-close-btn:hover {
+    background: var(--mint-100);
+    color: var(--mint-500);
 }
