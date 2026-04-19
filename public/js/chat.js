@@ -6,12 +6,15 @@ const Chat = {
   messages: [],        // 当前对话消息
   conversationId: null, // 当前对话 ID
   isStreaming: false,  // 是否正在流式输出
+  selectedText: '',    // 当前选中的文本
+  selectedMessageContent: null, // 选中文本所在消息的完整内容
 
   /**
    * 初始化
    */
   init() {
     this.bindEvents();
+    this.initSelectionToolbar();
     this.loadMessages();
   },
 
@@ -51,6 +54,92 @@ const Chat = {
     // 新对话按钮
     document.getElementById('newChatBtn').addEventListener('click', () => {
       this.startNewChat();
+    });
+  },
+
+  /**
+   * 初始化选中文字工具条
+   */
+  initSelectionToolbar() {
+    const toolbar = document.getElementById('selectionToolbar');
+    if (!toolbar) return;
+
+    // 监听选中事件
+    document.addEventListener('mouseup', (e) => {
+      // 延迟执行，等待选区稳定
+      setTimeout(() => {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+
+        // 检查是否在 AI 消息中选中了文字
+        if (text && text.length > 0) {
+          const range = selection.getRangeAt(0);
+          const messageEl = range.commonAncestorContainer.nodeType === 1
+            ? range.commonAncestorContainer.closest('.ai-message')
+            : range.commonAncestorContainer.parentElement?.closest('.ai-message');
+
+          if (messageEl) {
+            this.selectedText = text;
+            // 尝试获取消息的完整内容
+            const contentEl = messageEl.querySelector('.message-content');
+            this.selectedMessageContent = contentEl ? contentEl.textContent : null;
+
+            // 显示工具条
+            const rect = range.getBoundingClientRect();
+            toolbar.style.display = 'flex';
+            toolbar.style.left = `${rect.left + rect.width / 2 - toolbar.offsetWidth / 2}px`;
+            toolbar.style.top = `${rect.top - toolbar.offsetHeight - 8}px`;
+
+            // 防止超出屏幕
+            const toolbarRect = toolbar.getBoundingClientRect();
+            if (toolbarRect.left < 10) {
+              toolbar.style.left = '10px';
+            }
+            if (toolbarRect.right > window.innerWidth - 10) {
+              toolbar.style.left = `${window.innerWidth - toolbarRect.width - 10}px`;
+            }
+            if (toolbarRect.top < 10) {
+              toolbar.style.top = `${rect.bottom + 8}px`;
+            }
+
+            return;
+          }
+        }
+
+        // 如果没有有效选中，隐藏工具条
+        if (!e.target.closest('.selection-toolbar')) {
+          toolbar.style.display = 'none';
+          this.selectedText = '';
+          this.selectedMessageContent = null;
+        }
+      }, 10);
+    });
+
+    // 点击其他地方隐藏工具条
+    document.addEventListener('mousedown', (e) => {
+      if (!e.target.closest('.selection-toolbar')) {
+        toolbar.style.display = 'none';
+      }
+    });
+
+    // 收藏选中文字
+    document.getElementById('selectionSaveBtn').addEventListener('click', () => {
+      if (this.selectedText) {
+        this.saveQuote(this.selectedText);
+        toolbar.style.display = 'none';
+        window.getSelection().removeAllRanges();
+      }
+    });
+
+    // 复制选中文字
+    document.getElementById('selectionCopyBtn').addEventListener('click', () => {
+      if (this.selectedText) {
+        navigator.clipboard.writeText(this.selectedText).then(() => {
+          this.showSaveToast('已复制 ✓');
+        });
+        toolbar.style.display = 'none';
+        window.getSelection().removeAllRanges();
+      }
     });
   },
 
@@ -119,7 +208,9 @@ const Chat = {
       (newConversationId) => {
         this.isStreaming = false;
         this.hideLoading();
-        contentEl.innerHTML = this.formatContent(fullContent);
+
+        // 渲染最终内容并添加收藏按钮
+        this.finalizeMessage(aiMessageEl, fullContent);
 
         // 保存 conversation_id
         if (newConversationId && !this.conversationId) {
@@ -188,66 +279,103 @@ const Chat = {
 
     messageDiv.appendChild(contentDiv);
 
-    // AI 消息添加收藏按钮
-    if (role === 'assistant' && !isStreaming) {
-      const saveBtn = document.createElement('button');
-      saveBtn.className = 'message-save-btn';
-      saveBtn.innerHTML = `
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-        </svg>
-        收藏
-      `;
-      saveBtn.onclick = (e) => {
-        e.stopPropagation();
-        this.saveSelectedText(content);
-      };
-      messageDiv.appendChild(saveBtn);
+    // 非流式的 AI 消息添加收藏按钮
+    if (role === 'assistant' && !isStreaming && content) {
+      this.addMessageActions(messageDiv, content);
     }
 
     container.appendChild(messageDiv);
-
     this.scrollToBottom();
     return messageDiv;
   },
 
   /**
-   * 收藏选中文本或整条消息
+   * 完成流式消息（添加收藏按钮）
    */
-  async saveSelectedText(fullContent) {
-    // 获取用户选中的文本
-    const selection = window.getSelection();
-    let textToSave = selection.toString().trim();
-
-    // 如果没有选中，收藏整条消息的前200字
-    if (!textToSave) {
-      textToSave = fullContent.substring(0, 200);
-      if (fullContent.length > 200) {
-        textToSave += '...';
-      }
+  finalizeMessage(messageEl, content) {
+    const contentEl = messageEl.querySelector('.message-content');
+    if (contentEl) {
+      contentEl.innerHTML = this.formatContent(content);
     }
+    this.addMessageActions(messageEl, content);
+  },
 
-    if (!textToSave) {
-      showError('请先选中要收藏的文字');
+  /**
+   * 为消息添加操作按钮
+   */
+  addMessageActions(messageEl, content) {
+    // 检查是否已有操作区
+    if (messageEl.querySelector('.message-actions')) return;
+
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'message-actions';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'message-save-btn';
+    saveBtn.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+      </svg>
+      收藏
+    `;
+    saveBtn.onclick = (e) => {
+      e.stopPropagation();
+      // 检查是否有选中的文字
+      const selection = window.getSelection();
+      const selectedText = selection.toString().trim();
+
+      if (selectedText && messageEl.contains(selection.anchorNode)) {
+        // 收藏选中的文字
+        this.saveQuote(selectedText);
+      } else {
+        // 收藏整条消息（截取前200字）
+        let textToSave = content.substring(0, 200);
+        if (content.length > 200) {
+          textToSave += '...';
+        }
+        this.saveQuote(textToSave);
+      }
+    };
+
+    actionsDiv.appendChild(saveBtn);
+    messageEl.appendChild(actionsDiv);
+  },
+
+  /**
+   * 收藏金句
+   */
+  async saveQuote(text) {
+    if (!text) {
+      showError('没有可收藏的内容');
       return;
     }
 
     try {
       await API.post('/api/quotes', {
-        quote: textToSave,
+        quote: text,
         source: '来自对话'
       });
-
-      // 显示收藏成功提示
-      const toast = document.getElementById('saveToast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2000);
-
-      // 清除选中
-      selection.removeAllRanges();
+      this.showSaveToast('已收藏 ✨');
     } catch (error) {
-      showError(error.message || '收藏失败');
+      if (error.message.includes('已经收藏')) {
+        this.showSaveToast('已经收藏过了');
+      } else {
+        showError(error.message || '收藏失败');
+      }
     }
+  },
+
+  /**
+   * 显示收藏提示
+   */
+  showSaveToast(message = '已收藏') {
+    const toast = document.getElementById('saveToast');
+    const textEl = document.getElementById('saveToastText');
+    if (textEl) {
+      textEl.textContent = message;
+    }
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
   },
 
   /**

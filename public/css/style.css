@@ -889,6 +889,55 @@ body {
     height: 14px;
 }
 
+/* ============ 选中文字工具条 ============ */
+.selection-toolbar {
+    position: fixed;
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    animation: toolbarFadeIn 0.15s ease;
+}
+
+@keyframes toolbarFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.selection-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.selection-btn:hover {
+    background: var(--mint-50);
+    color: var(--mint-500);
+}
+
+.selection-btn:first-child:hover {
+    background: var(--warm-100);
+    color: var(--warm-orange);
+}
+
 /* ============ 生活关怀 ============ */
 .care-reminder {
     position: fixed;

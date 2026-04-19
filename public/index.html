@@ -179,7 +179,24 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
         </svg>
-        <span>已收藏</span>
+        <span id="saveToastText">已收藏</span>
+    </div>
+
+    <!-- 选中文字工具条 -->
+    <div class="selection-toolbar" id="selectionToolbar" style="display: none;">
+        <button class="selection-btn" id="selectionSaveBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            </svg>
+            收藏
+        </button>
+        <button class="selection-btn" id="selectionCopyBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+            复制
+        </button>
     </div>
 
     <div class="toast farewell-toast" id="farewellToast">
