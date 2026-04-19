@@ -673,8 +673,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    width: 100%;
-    margin-top: 16px;
+    flex: 1;
     padding: 12px;
     background: transparent;
     border: 1px dashed var(--text-light);
@@ -690,6 +689,37 @@ body {
     border-color: var(--mint-300);
     color: var(--mint-500);
     background: var(--mint-50);
+}
+
+/* 聊天控制按钮组 */
+.chat-control-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+/* 清除对话按钮 */
+.clear-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: 1px dashed var(--text-light);
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.clear-chat-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #fef2f2;
 }
 
 /* 收藏对话按钮 */

@@ -57,6 +57,11 @@ const Chat = {
       this.startNewChat();
     });
 
+    // 清除对话按钮
+    document.getElementById('clearChatBtn').addEventListener('click', () => {
+      this.clearCurrentMessages();
+    });
+
     // 监听聊天区域滚动，判断用户是否主动向上滚动
     const container = document.getElementById('chatContainer');
     container.addEventListener('scroll', () => {
@@ -386,6 +391,32 @@ const Chat = {
 
     // 显示欢迎区域
     this.showWelcome();
+  },
+
+  /**
+   * 清除当前对话中的所有消息
+   */
+  clearCurrentMessages() {
+    if (this.messages.length === 0) {
+      showError('当前没有对话内容');
+      return;
+    }
+
+    if (!confirm('确定要清除当前对话吗？这将删除所有消息。')) {
+      return;
+    }
+
+    this.messages = [];
+    Storage.saveMessages([]);
+
+    // 清空聊天区域
+    const container = document.getElementById('chatContainer');
+    container.innerHTML = '';
+
+    // 显示欢迎区域
+    this.showWelcome();
+
+    this.showSaveToast('对话已清除');
   },
 
   /**
