@@ -1301,3 +1301,150 @@ body {
     background: var(--mint-100);
     color: var(--mint-500);
 }
+
+/* ============ 更新公告弹窗 ============ */
+.changelog-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2100;
+}
+
+.changelog-content {
+    text-align: left;
+    max-width: 420px;
+    padding: 28px;
+}
+
+.changelog-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.changelog-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--mint-100);
+    color: var(--mint-500);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.changelog-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--text-primary);
+}
+
+.changelog-body {
+    margin-bottom: 24px;
+}
+
+.changelog-section {
+    margin-bottom: 16px;
+}
+
+.changelog-section h4 {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.changelog-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.changelog-section li {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.changelog-section li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--mint-400);
+}
+
+.changelog-section li strong {
+    color: var(--text-primary);
+}
+
+.changelog-close-btn {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--mint-400) 0%, var(--mint-500) 100%);
+    border: none;
+    border-radius: var(--radius-full);
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.changelog-close-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+/* ============ 设置页链接样式 ============ */
+.settings-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: var(--cream-100);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    margin-bottom: 12px;
+}
+
+.settings-link:hover {
+    background: var(--mint-50);
+}
+
+.settings-link-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.settings-link-icon {
+    font-size: 1.2rem;
+}
+
+.settings-link-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-link-title {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.settings-link-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.settings-link-arrow {
+    color: var(--text-muted);
+}

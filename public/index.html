@@ -231,6 +231,34 @@
         </div>
     </div>
 
+    <!-- 更新公告弹窗 -->
+    <div class="changelog-modal" id="changelogModal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content changelog-content">
+            <div class="changelog-header">
+                <span class="changelog-badge">v1.1</span>
+                <h3 class="changelog-title">🌱 新版本来啦</h3>
+            </div>
+            <div class="changelog-body">
+                <div class="changelog-section">
+                    <h4>✨ 新功能</h4>
+                    <ul>
+                        <li><strong>心情观察</strong> 💚<br>全新「心情」页面，追踪聊天次数、记录天数，还有简单的心情分析</li>
+                        <li><strong>自定义头像</strong> 🎨<br>点击左上角头像，16款可爱emoji任你选</li>
+                    </ul>
+                </div>
+                <div class="changelog-section">
+                    <h4>🔧 优化</h4>
+                    <ul>
+                        <li>导航栏新增「心情」入口</li>
+                        <li>图标风格升级，更加可爱清新</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="changelog-close-btn" id="changelogCloseBtn">知道啦 💚</button>
+        </div>
+    </div>
+
     <!-- 头像选择弹窗 -->
     <div class="avatar-modal" id="avatarModal" style="display: none;">
         <div class="modal-overlay"></div>
@@ -266,5 +294,43 @@
     <script src="js/storage.js"></script>
     <script src="js/care.js"></script>
     <script src="js/chat.js"></script>
+    <script>
+        // 更新公告弹窗
+        (function() {
+            const CURRENT_VERSION = '1.1';
+            const SEEN_KEY = 'changelog_seen_version';
+            const seenVersion = localStorage.getItem(SEEN_KEY);
+
+            if (seenVersion !== CURRENT_VERSION) {
+                // 延迟显示，等登录弹窗处理完
+                setTimeout(() => {
+                    const authModal = document.getElementById('authModal');
+                    if (authModal.style.display === 'none' || !authModal.style.display) {
+                        document.getElementById('changelogModal').style.display = 'flex';
+                    } else {
+                        // 登录弹窗还在显示，等登录完成后再显示
+                        const observer = new MutationObserver(() => {
+                            if (authModal.style.display === 'none') {
+                                document.getElementById('changelogModal').style.display = 'flex';
+                                observer.disconnect();
+                            }
+                        });
+                        observer.observe(authModal, { attributes: true, attributeFilter: ['style'] });
+                    }
+                }, 500);
+            }
+
+            // 关闭公告
+            document.getElementById('changelogCloseBtn').addEventListener('click', () => {
+                document.getElementById('changelogModal').style.display = 'none';
+                localStorage.setItem(SEEN_KEY, CURRENT_VERSION);
+            });
+
+            document.getElementById('changelogModal').querySelector('.modal-overlay').addEventListener('click', () => {
+                document.getElementById('changelogModal').style.display = 'none';
+                localStorage.setItem(SEEN_KEY, CURRENT_VERSION);
+            });
+        })();
+    </script>
 </body>
 </html>

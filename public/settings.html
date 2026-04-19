@@ -195,6 +195,12 @@
                     </svg>
                     <span>历史</span>
                 </a>
+                <a href="mood.html" class="nav-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>心情</span>
+                </a>
                 <a href="saved.html" class="nav-item">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
@@ -266,12 +272,56 @@
                     </svg>
                     保存设置
                 </button>
+
+                <div class="settings-section" style="margin-top: 32px;">
+                    <h2 class="settings-title">📋 关于</h2>
+                    <a href="#" class="settings-link" id="showChangelogBtn">
+                        <div class="settings-link-content">
+                            <span class="settings-link-icon">🌱</span>
+                            <div class="settings-link-text">
+                                <span class="settings-link-title">更新日志</span>
+                                <span class="settings-link-desc">查看 v1.1 新功能</span>
+                            </div>
+                        </div>
+                        <svg class="settings-link-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18l6-6-6-6"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
         </main>
     </div>
 
     <div class="toast save-toast" id="saveToast">
         <span>已保存</span>
+    </div>
+
+    <!-- 更新公告弹窗 -->
+    <div class="changelog-modal" id="changelogModal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-content changelog-content">
+            <div class="changelog-header">
+                <span class="changelog-badge">v1.1</span>
+                <h3 class="changelog-title">🌱 新版本来啦</h3>
+            </div>
+            <div class="changelog-body">
+                <div class="changelog-section">
+                    <h4>✨ 新功能</h4>
+                    <ul>
+                        <li><strong>心情观察</strong> 💚<br>全新「心情」页面，追踪聊天次数、记录天数，还有简单的心情分析</li>
+                        <li><strong>自定义头像</strong> 🎨<br>点击左上角头像，16款可爱emoji任你选</li>
+                    </ul>
+                </div>
+                <div class="changelog-section">
+                    <h4>🔧 优化</h4>
+                    <ul>
+                        <li>导航栏新增「心情」入口</li>
+                        <li>图标风格升级，更加可爱清新</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="changelog-close-btn" id="changelogCloseBtn">知道啦 💚</button>
+        </div>
     </div>
 
     <script src="js/config.js"></script>
@@ -339,6 +389,20 @@
         }
 
         loadSettings();
+
+        // 更新日志弹窗
+        document.getElementById('showChangelogBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('changelogModal').style.display = 'flex';
+        });
+
+        document.getElementById('changelogCloseBtn').addEventListener('click', () => {
+            document.getElementById('changelogModal').style.display = 'none';
+        });
+
+        document.getElementById('changelogModal').querySelector('.modal-overlay').addEventListener('click', () => {
+            document.getElementById('changelogModal').style.display = 'none';
+        });
     </script>
 </body>
 </html>
