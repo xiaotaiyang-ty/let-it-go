@@ -98,6 +98,147 @@
             color: var(--text-muted);
         }
 
+        /* 今日心情卡片 */
+        .today-mood-card {
+            background: linear-gradient(135deg, var(--mint-50) 0%, white 100%);
+            border: 2px solid var(--mint-200);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .today-mood-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--mint-100) 0%, transparent 70%);
+            opacity: 0.5;
+        }
+
+        .today-emoji {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .today-score {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            color: var(--mint-500);
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .today-score span {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .today-label {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .today-summary {
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+            max-width: 400px;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+
+        .today-suggestion {
+            font-size: 0.9rem;
+            color: var(--mint-500);
+            font-style: italic;
+            position: relative;
+        }
+
+        .today-keywords {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            position: relative;
+        }
+
+        .keyword-tag {
+            font-size: 0.8rem;
+            padding: 6px 14px;
+            background: white;
+            border: 1px solid var(--mint-200);
+            border-radius: var(--radius-full);
+            color: var(--mint-500);
+        }
+
+        /* 分析按钮 */
+        .analyze-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--mint-400) 0%, var(--mint-500) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+            position: relative;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .analyze-btn.loading {
+            pointer-events: none;
+        }
+
+        .refresh-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid var(--mint-200);
+            border-radius: var(--radius-full);
+            color: var(--mint-500);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .refresh-btn:hover {
+            background: var(--mint-50);
+            transform: rotate(180deg);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* 通用卡片 */
         .mood-card {
             background: white;
@@ -136,6 +277,11 @@
             background: linear-gradient(135deg, #fafafa 0%, white 100%);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .mood-item:hover {
+            border-color: var(--mint-200);
         }
 
         .mood-item-header {
@@ -148,14 +294,25 @@
         .mood-date {
             font-weight: 600;
             color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .mood-score {
+        .mood-date-emoji {
+            font-size: 1.2rem;
+        }
+
+        .mood-score-badge {
             display: flex;
             align-items: center;
             gap: 4px;
+            padding: 4px 12px;
+            background: var(--mint-50);
+            border-radius: var(--radius-full);
             color: var(--mint-500);
             font-weight: 500;
+            font-size: 0.85rem;
         }
 
         .mood-content {
@@ -164,19 +321,16 @@
             line-height: 1.7;
         }
 
-        .mood-keywords {
+        .mood-item-keywords {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
             margin-top: 10px;
         }
 
-        .keyword-tag {
+        .mood-item-keywords .keyword-tag {
             font-size: 0.75rem;
             padding: 4px 10px;
-            background: var(--mint-50);
-            border-radius: var(--radius-full);
-            color: var(--mint-500);
         }
 
         /* 空状态 */
@@ -207,23 +361,31 @@
             margin-bottom: 24px;
         }
 
-        .empty-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 14px 28px;
-            background: linear-gradient(135deg, var(--mint-400) 0%, var(--mint-500) 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: var(--radius-full);
-            font-weight: 500;
-            transition: all var(--transition-fast);
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        /* 加载状态 */
+        .loading-state {
+            text-align: center;
+            padding: 40px;
         }
 
-        .empty-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--mint-100);
+            border-top-color: var(--mint-500);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 提示信息 */
+        .analyze-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 12px;
         }
 
         /* 响应式 */
@@ -233,6 +395,9 @@
             }
             .mood-overview {
                 grid-template-columns: 1fr;
+            }
+            .today-mood-card {
+                padding: 24px 20px;
             }
         }
     </style>
@@ -256,41 +421,83 @@
             </div>
         </header>
 
-        <!-- 概览卡片 -->
-        <div class="mood-overview" id="moodOverview">
-            <div class="overview-card">
-                <div class="overview-icon">💚</div>
-                <div class="overview-value" id="avgScore">--</div>
-                <div class="overview-label">本周心情</div>
-            </div>
-            <div class="overview-card">
-                <div class="overview-icon">💬</div>
-                <div class="overview-value" id="chatCount">0</div>
-                <div class="overview-label">聊天次数</div>
-            </div>
-            <div class="overview-card">
-                <div class="overview-icon">📅</div>
-                <div class="overview-value" id="daysCount">0</div>
-                <div class="overview-label">记录天数</div>
-            </div>
+        <!-- 加载状态 -->
+        <div class="loading-state" id="loadingState">
+            <div class="loading-spinner"></div>
+            <p style="color: var(--text-muted);">正在加载心情数据...</p>
         </div>
 
-        <!-- 心情记录 -->
-        <div class="mood-card" id="moodCard">
-            <div class="card-header">
-                <h3 class="card-title">📝 最近心情</h3>
+        <!-- 主内容（默认隐藏） -->
+        <div id="mainContent" style="display: none;">
+            <!-- 概览卡片 -->
+            <div class="mood-overview">
+                <div class="overview-card">
+                    <div class="overview-icon">💚</div>
+                    <div class="overview-value" id="avgScore">--</div>
+                    <div class="overview-label">本周心情</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">💬</div>
+                    <div class="overview-value" id="chatCount">0</div>
+                    <div class="overview-label">本周聊天</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-icon">📅</div>
+                    <div class="overview-value" id="daysCount">0</div>
+                    <div class="overview-label">记录天数</div>
+                </div>
             </div>
-            <div class="mood-list" id="moodList">
-                <!-- 动态生成 -->
+
+            <!-- 今日心情 -->
+            <div class="today-mood-card" id="todayMoodCard">
+                <button class="refresh-btn" id="refreshBtn" title="重新分析">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 4v6h-6M1 20v-6h6"/>
+                        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                    </svg>
+                </button>
+
+                <!-- 未分析状态 -->
+                <div id="notAnalyzed">
+                    <div class="today-emoji">🤔</div>
+                    <p class="today-label">今天还没有分析心情</p>
+                    <p class="today-summary">点击下方按钮，让我帮你回顾今天的心情</p>
+                    <button class="analyze-btn" id="analyzeBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        分析今日心情
+                    </button>
+                    <p class="analyze-hint">消耗 1 次 API 额度</p>
+                </div>
+
+                <!-- 已分析状态 -->
+                <div id="analyzed" style="display: none;">
+                    <div class="today-emoji" id="todayEmoji">😊</div>
+                    <div class="today-score"><span id="todayScore">75</span><span>分</span></div>
+                    <p class="today-label" id="todayLabel">平静</p>
+                    <p class="today-summary" id="todaySummary">今天的你看起来还不错</p>
+                    <p class="today-suggestion" id="todaySuggestion">💚 继续保持好心情</p>
+                    <div class="today-keywords" id="todayKeywords"></div>
+                </div>
+            </div>
+
+            <!-- 历史记录 -->
+            <div class="mood-card" id="historyCard" style="display: none;">
+                <div class="card-header">
+                    <h3 class="card-title">📝 历史心情</h3>
+                </div>
+                <div class="mood-list" id="moodList"></div>
             </div>
         </div>
 
         <!-- 空状态 -->
         <div class="empty-state" id="emptyState" style="display: none;">
             <div class="empty-icon">💭</div>
-            <p class="empty-text">还没有心情记录</p>
-            <p class="empty-hint">和我聊聊天，<br>我会帮你记录每天的心情变化</p>
-            <a href="index.html" class="empty-action">
+            <p class="empty-text">开始记录你的心情吧</p>
+            <p class="empty-hint">和我聊聊天，然后回来看看心情分析</p>
+            <a href="index.html" class="analyze-btn" style="text-decoration: none;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                 </svg>
@@ -299,122 +506,179 @@
         </div>
     </main>
 
-    <script src="js/storage.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const moodCard = document.getElementById('moodCard');
-            const moodList = document.getElementById('moodList');
-            const emptyState = document.getElementById('emptyState');
+        // 检查登录
+        if (!localStorage.getItem(CONFIG.TOKEN_KEY)) {
+            window.location.href = 'index.html';
+        }
 
-            // 从本地存储获取对话数据
-            const conversations = JSON.parse(localStorage.getItem('conversations') || '[]');
+        const loadingState = document.getElementById('loadingState');
+        const mainContent = document.getElementById('mainContent');
+        const emptyState = document.getElementById('emptyState');
+        const notAnalyzed = document.getElementById('notAnalyzed');
+        const analyzed = document.getElementById('analyzed');
+        const historyCard = document.getElementById('historyCard');
+        const moodList = document.getElementById('moodList');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
 
-            if (conversations.length === 0) {
-                moodCard.style.display = 'none';
-                emptyState.style.display = 'block';
-                return;
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', loadMoodData);
+
+        // 分析按钮
+        analyzeBtn.addEventListener('click', () => analyzeMood(false));
+        refreshBtn.addEventListener('click', () => analyzeMood(true));
+
+        // 加载心情数据
+        async function loadMoodData() {
+            try {
+                const data = await API.get('/api/mood/history');
+
+                loadingState.style.display = 'none';
+                mainContent.style.display = 'block';
+
+                // 更新统计
+                document.getElementById('avgScore').textContent = data.stats.week_avg_score || '--';
+                document.getElementById('chatCount').textContent = data.stats.week_chat_count || 0;
+                document.getElementById('daysCount').textContent = data.stats.week_record_days || 0;
+
+                // 今日心情
+                if (data.today) {
+                    showAnalyzedMood(data.today);
+                } else {
+                    notAnalyzed.style.display = 'block';
+                    analyzed.style.display = 'none';
+                }
+
+                // 历史记录（排除今天）
+                const history = data.history.filter(h => {
+                    const recordDate = new Date(h.date);
+                    const today = new Date();
+                    return recordDate.toDateString() !== today.toDateString();
+                });
+
+                if (history.length > 0) {
+                    historyCard.style.display = 'block';
+                    renderHistory(history);
+                }
+
+            } catch (error) {
+                console.error('加载失败:', error);
+                loadingState.style.display = 'none';
+
+                if (error.message.includes('登录')) {
+                    window.location.href = 'index.html';
+                } else {
+                    emptyState.style.display = 'block';
+                }
             }
+        }
 
-            // 统计数据
-            const now = new Date();
-            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        // 分析心情
+        async function analyzeMood(forceRefresh) {
+            const btn = forceRefresh ? refreshBtn : analyzeBtn;
+            const originalContent = btn.innerHTML;
 
-            // 本周对话
-            const weekConvs = conversations.filter(c => new Date(c.createdAt) >= weekAgo);
+            btn.disabled = true;
+            btn.innerHTML = forceRefresh
+                ? '<div class="loading-spinner" style="width:18px;height:18px;margin:0;"></div>'
+                : '<div class="loading-spinner" style="width:18px;height:18px;margin:0;"></div> 分析中...';
 
-            // 更新统计
-            document.getElementById('chatCount').textContent = weekConvs.length;
+            try {
+                const data = await API.post('/api/mood/analyze', {
+                    force_refresh: forceRefresh
+                });
 
-            // 计算天数
-            const uniqueDays = new Set(weekConvs.map(c => {
-                const d = new Date(c.createdAt);
-                return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-            }));
-            document.getElementById('daysCount').textContent = uniqueDays.size;
+                if (data.mood) {
+                    showAnalyzedMood(data.mood);
 
-            // 简单的心情分析（基于对话内容关键词）
-            let totalScore = 0;
-            let scoreCount = 0;
+                    // 如果是刷新，重新加载页面数据
+                    if (forceRefresh) {
+                        loadMoodData();
+                    }
+                }
 
-            const positiveWords = ['开心', '高兴', '感谢', '好的', '不错', '明白', '理解', '谢谢', '嗯'];
-            const negativeWords = ['难过', '焦虑', '担心', '害怕', '生气', '烦', '累', '痛苦', '失望'];
+            } catch (error) {
+                alert(error.message || '分析失败，请稍后重试');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        }
 
-            // 渲染心情列表
-            const recentConvs = conversations.slice(0, 10);
+        // 显示已分析的心情
+        function showAnalyzedMood(mood) {
+            notAnalyzed.style.display = 'none';
+            analyzed.style.display = 'block';
 
-            recentConvs.forEach(conv => {
-                const userMessages = conv.messages?.filter(m => m.role === 'user') || [];
-                const allText = userMessages.map(m => m.content).join(' ');
+            document.getElementById('todayEmoji').textContent = mood.emoji || '😊';
+            document.getElementById('todayScore').textContent = mood.score || 65;
+            document.getElementById('todayLabel').textContent = mood.mood_label || '平静';
+            document.getElementById('todaySummary').textContent = mood.summary || '今天的你看起来还不错';
+            document.getElementById('todaySuggestion').textContent = '💚 ' + (mood.suggestion || '继续保持好心情');
 
-                // 简单情感分析
-                let score = 70; // 默认中性
-                positiveWords.forEach(w => { if (allText.includes(w)) score += 5; });
-                negativeWords.forEach(w => { if (allText.includes(w)) score -= 5; });
-                score = Math.max(30, Math.min(100, score));
+            // 关键词
+            const keywordsEl = document.getElementById('todayKeywords');
+            keywordsEl.innerHTML = '';
+            if (mood.keywords && mood.keywords.length > 0) {
+                mood.keywords.forEach(k => {
+                    const tag = document.createElement('span');
+                    tag.className = 'keyword-tag';
+                    tag.textContent = k;
+                    keywordsEl.appendChild(tag);
+                });
+            }
+        }
 
-                totalScore += score;
-                scoreCount++;
+        // 渲染历史记录
+        function renderHistory(history) {
+            moodList.innerHTML = '';
 
-                // 提取关键词
-                const keywords = [];
-                if (allText.includes('工作') || allText.includes('老板') || allText.includes('同事')) keywords.push('工作');
-                if (allText.includes('家人') || allText.includes('父母') || allText.includes('妈') || allText.includes('爸')) keywords.push('家庭');
-                if (allText.includes('朋友')) keywords.push('朋友');
-                if (allText.includes('恋') || allText.includes('对象') || allText.includes('男朋友') || allText.includes('女朋友')) keywords.push('感情');
-                if (allText.includes('压力') || allText.includes('焦虑')) keywords.push('压力');
-
-                const date = new Date(conv.createdAt || conv.updatedAt);
+            history.forEach(record => {
+                const date = new Date(record.date);
                 const dateStr = formatDate(date);
-                const preview = userMessages[0]?.content?.slice(0, 50) || '(无内容)';
 
                 const item = document.createElement('div');
                 item.className = 'mood-item';
                 item.innerHTML = `
                     <div class="mood-item-header">
-                        <span class="mood-date">${dateStr}</span>
-                        <span class="mood-score">${getMoodEmoji(score)} ${score}分</span>
+                        <span class="mood-date">
+                            <span class="mood-date-emoji">${record.emoji || '😊'}</span>
+                            ${dateStr}
+                        </span>
+                        <span class="mood-score-badge">${record.score || 65}分 · ${record.mood_label || '平静'}</span>
                     </div>
-                    <div class="mood-content">${escapeHtml(preview)}${preview.length >= 50 ? '...' : ''}</div>
-                    ${keywords.length > 0 ? `
-                        <div class="mood-keywords">
-                            ${keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')}
+                    <div class="mood-content">${escapeHtml(record.summary || '')}</div>
+                    ${record.keywords && record.keywords.length > 0 ? `
+                        <div class="mood-item-keywords">
+                            ${record.keywords.map(k => `<span class="keyword-tag">${escapeHtml(k)}</span>`).join('')}
                         </div>
                     ` : ''}
                 `;
                 moodList.appendChild(item);
             });
+        }
 
-            // 更新平均分
-            if (scoreCount > 0) {
-                const avg = Math.round(totalScore / scoreCount);
-                document.getElementById('avgScore').textContent = avg;
-            }
+        function formatDate(date) {
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-            function getMoodEmoji(score) {
-                if (score >= 80) return '😊';
-                if (score >= 60) return '🙂';
-                if (score >= 40) return '😐';
-                return '😔';
-            }
+            if (days === 0) return '今天';
+            if (days === 1) return '昨天';
+            if (days === 2) return '前天';
+            if (days < 7) return `${days}天前`;
 
-            function formatDate(date) {
-                const now = new Date();
-                const diff = now - date;
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            return date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+        }
 
-                if (days === 0) return '今天';
-                if (days === 1) return '昨天';
-                if (days < 7) return `${days}天前`;
-
-                return date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
-            }
-
-            function escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-        });
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 </body>
 </html>
