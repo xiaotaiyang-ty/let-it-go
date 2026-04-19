@@ -664,7 +664,7 @@ const Chat = {
     let promptInfo = null;
 
     try {
-      const token = Auth.getToken();
+      const token = API.getToken();
       const response = await fetch(`${API.baseURL}/api/mystery-box`, {
         method: 'POST',
         headers: {
@@ -758,7 +758,7 @@ const Chat = {
       <div class="mystery-box-header">
         <div class="mystery-box-title">
           <span class="mystery-box-emoji">🎁</span>
-          <span class="mystery-box-category">正在开盒...</span>
+          <span class="mystery-box-category">看看今天遇见什么...</span>
         </div>
         <button class="mystery-box-toggle" style="display: none;">
           <span>－</span> 收起
