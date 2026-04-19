@@ -620,7 +620,7 @@ const Chat = {
   },
 
   /**
-   * 打开惊喜盲盒
+   * 打开惊喜盲盒（使用 /api/chat 接口，function_used='惊喜盲盒'）
    */
   async openMysteryBox() {
     if (!Auth.isLoggedIn()) {
@@ -657,93 +657,58 @@ const Chat = {
     this.showMysteryBoxLoading();
     this.isStreaming = true;
 
-    // 创建盲盒卡片容器
-    const boxCard = this.createMysteryBoxCard();
-    const contentEl = boxCard.querySelector('.mystery-box-content .message-content');
+    // 准备 AI 消息容器（普通消息样式，不用特殊卡片）
+    const aiMessageEl = this.appendMessage('assistant', '', true);
+    const contentEl = aiMessageEl.querySelector('.message-content');
     let fullContent = '';
-    let promptInfo = null;
 
-    try {
-      const token = API.getToken();
-      const response = await fetch(`${API.baseURL}/api/mysterybox`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          messages: this.messages.map(m => ({ role: m.role, content: m.content })),
-          conversation_id: this.conversationId
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || '请求失败');
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') {
-              // 完成
-              this.finalizeMysteryBox(boxCard, promptInfo, fullContent);
-            } else {
-              try {
-                const json = JSON.parse(data);
-
-                // 处理 prompt 信息
-                if (json.type === 'prompt_info') {
-                  promptInfo = json.prompt;
-                  this.updateMysteryBoxHeader(boxCard, promptInfo);
-                }
-
-                // 处理内容
-                if (json.content) {
-                  fullContent += json.content;
-                  contentEl.innerHTML = this.formatContent(fullContent) + '<span class="streaming-cursor">|</span>';
-                  if (!this.userScrolledUp) {
-                    this.scrollToBottom();
-                  }
-                }
-
-                // 处理错误
-                if (json.error) {
-                  throw new Error(json.error);
-                }
-              } catch (e) {
-                if (e.message !== 'Unexpected end of JSON input') {
-                  console.error('Parse error:', e);
-                }
-              }
-            }
-          }
+    // 使用和换位思考、停止灾难化一样的方式调用
+    await API.chatStream(
+      this.messages.map(m => ({ role: m.role, content: m.content })),
+      '惊喜盲盒',
+      this.conversationId,
+      // onChunk
+      (chunk) => {
+        fullContent += chunk;
+        contentEl.innerHTML = this.formatContent(fullContent) + '<span class="streaming-cursor">|</span>';
+        if (!this.userScrolledUp) {
+          this.scrollToBottom();
         }
+      },
+      // onDone
+      (newConversationId) => {
+        this.isStreaming = false;
+        this.userScrolledUp = false;
+        this.hideMysteryBoxLoading();
+
+        // 渲染最终内容并添加收藏按钮
+        this.finalizeMessage(aiMessageEl, fullContent);
+
+        // 保存 conversation_id
+        if (newConversationId && !this.conversationId) {
+          this.conversationId = newConversationId;
+          Storage.setConversationId(newConversationId);
+        }
+
+        // 保存消息
+        this.messages.push({ role: 'assistant', content: fullContent });
+        Storage.saveMessages(this.messages);
+
+        // 刷新用户额度显示
+        Auth.refreshUserInfo();
+
+        // 完成后滚动到底部
+        this.scrollToBottom();
+      },
+      // onError
+      (error) => {
+        this.isStreaming = false;
+        this.userScrolledUp = false;
+        this.hideMysteryBoxLoading();
+        contentEl.innerHTML = `<span style="color: #ef4444;">抱歉，出了点问题：${error.message}</span>`;
+        showError(error.message);
       }
-
-      this.isStreaming = false;
-      this.userScrolledUp = false;
-      this.hideMysteryBoxLoading();
-      Auth.refreshUserInfo();
-      this.scrollToBottom();
-
-    } catch (error) {
-      this.isStreaming = false;
-      this.userScrolledUp = false;
-      this.hideMysteryBoxLoading();
-      contentEl.innerHTML = `<span style="color: #ef4444;">抱歉，出了点问题：${error.message}</span>`;
-      showError(error.message);
-    }
+    );
   },
 
   /**
