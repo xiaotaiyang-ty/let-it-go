@@ -1836,30 +1836,30 @@ body {
 
 /* ========== 工具箱页面 ========== */
 .tools-page {
-    padding: 48px 40px;
-    max-width: 860px;
+    padding: 36px 32px;
+    max-width: 800px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 20px;
     height: 100%;
     overflow-y: auto;
 }
 
 .tools-header {
     text-align: center;
-    padding-bottom: 8px;
+    padding-bottom: 4px;
 }
 
 .tools-title {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 6px;
 }
 
 .tools-subtitle {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
 }
 
@@ -1867,14 +1867,13 @@ body {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-    justify-content: center;
 }
 
 .tool-card {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 24px;
+    padding: 12px 22px;
     border: 1.5px solid var(--border-light);
     border-radius: 20px;
     background: var(--bg-card);
@@ -1888,25 +1887,23 @@ body {
     border-color: var(--mint-300);
     background: var(--mint-50);
     color: var(--mint-600);
-    transform: translateY(-1px);
 }
 
 .tool-card.active {
     border-color: var(--mint-400);
-    background: linear-gradient(135deg, var(--mint-50) 0%, var(--mint-100) 100%);
+    background: var(--mint-100);
     color: var(--mint-600);
     font-weight: 500;
-    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);
-    transform: translateY(-1px);
+    box-shadow: 0 2px 12px rgba(16, 185, 129, 0.12);
 }
 
 .tool-card-emoji {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
 }
 
 .tool-description {
-    padding: 14px 20px;
-    background: linear-gradient(135deg, var(--mint-50) 0%, rgba(255,255,255,0.8) 100%);
+    padding: 12px 16px;
+    background: var(--mint-50);
     border-radius: var(--radius-md);
     border-left: 3px solid var(--mint-400);
 }
@@ -1914,20 +1911,20 @@ body {
 .tool-description p {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 .tools-input-section {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
 }
 
 .tools-textarea {
     width: 100%;
-    min-height: 140px;
-    max-height: 320px;
-    padding: 20px;
+    min-height: 130px;
+    max-height: 300px;
+    padding: 18px;
     border: 1.5px solid var(--border-light);
     border-radius: var(--radius-lg);
     background: var(--bg-card);
@@ -1942,7 +1939,7 @@ body {
 .tools-textarea:focus {
     outline: none;
     border-color: var(--mint-400);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.08);
 }
 
 .tools-textarea::placeholder {
@@ -1952,28 +1949,33 @@ body {
 
 .tools-send-btn {
     align-self: flex-end;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 28px;
-    background: linear-gradient(135deg, var(--mint-500) 0%, var(--mint-600) 100%);
-    color: white;
+    padding: 11px 26px;
+    background-color: #10b981;
+    color: #ffffff;
     border: none;
     border-radius: 20px;
     font-size: 0.92rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 
 .tools-send-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    background-color: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
 }
 
 .tools-send-btn:active {
     transform: translateY(0);
+}
+
+.tools-send-btn svg {
+    stroke: #ffffff;
 }
 
 .tools-output-section {
@@ -1982,16 +1984,15 @@ body {
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-    min-height: 200px;
 }
 
 .tools-output-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 20px;
+    padding: 12px 18px;
     border-bottom: 1px solid var(--border-light);
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.04) 0%, rgba(16, 185, 129, 0.01) 100%);
+    background: rgba(16, 185, 129, 0.03);
 }
 
 .tools-output-label {
@@ -2009,14 +2010,14 @@ body {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--mint-400);
+    background: #10b981;
 }
 
 .tools-copy-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 7px 14px;
+    padding: 6px 14px;
     border: 1px solid var(--border-light);
     border-radius: 16px;
     background: white;
@@ -2033,23 +2034,23 @@ body {
 }
 
 .tools-output-content {
-    padding: 24px;
+    padding: 20px;
     font-size: 0.95rem;
     line-height: 1.8;
     color: var(--text-primary);
-    max-height: 400px;
+    max-height: 420px;
     overflow-y: auto;
 }
 
 .tools-output-content h2 {
     font-size: 1.1rem;
-    margin: 20px 0 10px;
+    margin: 16px 0 8px;
     color: var(--mint-600);
 }
 
 .tools-output-content h3 {
     font-size: 1rem;
-    margin: 14px 0 8px;
+    margin: 12px 0 6px;
 }
 
 .tools-loading {
@@ -2057,14 +2058,14 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 20px;
-    color: var(--mint-500);
+    padding: 16px;
+    color: #10b981;
     font-size: 0.9rem;
 }
 
 .streaming-cursor {
     animation: blink 0.8s infinite;
-    color: var(--mint-400);
+    color: #10b981;
     font-weight: 300;
 }
 
