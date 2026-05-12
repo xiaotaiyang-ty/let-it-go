@@ -107,7 +107,7 @@ const Tools = {
     if (this.isProcessing) return;
     this.isProcessing = true;
 
-    // 显示加载
+    // 显示加载，隐藏旧输出
     document.getElementById('toolLoading').style.display = 'flex';
     document.getElementById('toolOutputSection').style.display = 'none';
     this.outputContent = '';
@@ -115,8 +115,6 @@ const Tools = {
     // 准备输出区
     const outputSection = document.getElementById('toolOutputSection');
     const outputContent = document.getElementById('toolOutputContent');
-    outputSection.style.display = 'block';
-    outputContent.innerHTML = '';
 
     await API.chatStream(
       [{ role: 'user', content: content }],
@@ -124,13 +122,22 @@ const Tools = {
       null,
       // onChunk
       (chunk) => {
+        // 首个 chunk 到达时再显示输出区（避免空白闪烁）
+        if (!this.outputContent) {
+          document.getElementById('toolLoading').style.display = 'none';
+          outputSection.style.display = 'block';
+          outputContent.innerHTML = '';
+        }
         this.outputContent += chunk;
         outputContent.innerHTML = this.formatContent(this.outputContent) + '<span class="streaming-cursor">|</span>';
+        // 输出区内部滚动到底，不影响外部页面
+        outputContent.scrollTop = outputContent.scrollHeight;
       },
       // onDone
       () => {
         this.isProcessing = false;
         document.getElementById('toolLoading').style.display = 'none';
+        outputSection.style.display = 'block';
         outputContent.innerHTML = this.formatContent(this.outputContent);
         Auth.refreshUserInfo();
       },

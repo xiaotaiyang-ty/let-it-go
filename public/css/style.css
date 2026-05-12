@@ -1836,29 +1836,30 @@ body {
 
 /* ========== 工具箱页面 ========== */
 .tools-page {
-    padding: 40px 32px;
-    max-width: 720px;
+    padding: 48px 40px;
+    max-width: 860px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 28px;
     height: 100%;
     overflow-y: auto;
 }
 
 .tools-header {
     text-align: center;
+    padding-bottom: 8px;
 }
 
 .tools-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 
 .tools-subtitle {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     color: var(--text-muted);
 }
 
@@ -1866,18 +1867,19 @@ body {
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .tool-card {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
+    gap: 10px;
+    padding: 14px 24px;
     border: 1.5px solid var(--border-light);
-    border-radius: var(--radius-md);
+    border-radius: 20px;
     background: var(--bg-card);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
     font-size: 0.95rem;
     color: var(--text-secondary);
 }
@@ -1886,144 +1888,168 @@ body {
     border-color: var(--mint-300);
     background: var(--mint-50);
     color: var(--mint-600);
+    transform: translateY(-1px);
 }
 
 .tool-card.active {
     border-color: var(--mint-400);
-    background: var(--mint-100);
+    background: linear-gradient(135deg, var(--mint-50) 0%, var(--mint-100) 100%);
     color: var(--mint-600);
     font-weight: 500;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);
+    transform: translateY(-1px);
 }
 
 .tool-card-emoji {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 
 .tool-description {
-    padding: 12px 16px;
-    background: var(--mint-50);
-    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    background: linear-gradient(135deg, var(--mint-50) 0%, rgba(255,255,255,0.8) 100%);
+    border-radius: var(--radius-md);
     border-left: 3px solid var(--mint-400);
 }
 
 .tool-description p {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .tools-input-section {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .tools-textarea {
     width: 100%;
-    min-height: 120px;
-    max-height: 300px;
-    padding: 16px;
+    min-height: 140px;
+    max-height: 320px;
+    padding: 20px;
     border: 1.5px solid var(--border-light);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     background: var(--bg-card);
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.7;
     color: var(--text-primary);
     resize: vertical;
-    transition: border-color var(--transition-fast);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     font-family: inherit;
 }
 
 .tools-textarea:focus {
     outline: none;
     border-color: var(--mint-400);
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
 }
 
 .tools-textarea::placeholder {
     color: var(--text-muted);
+    line-height: 1.8;
 }
 
 .tools-send-btn {
     align-self: flex-end;
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 10px 24px;
-    background: var(--mint-500);
+    gap: 8px;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--mint-500) 0%, var(--mint-600) 100%);
     color: white;
     border: none;
-    border-radius: var(--radius-md);
-    font-size: 0.9rem;
+    border-radius: 20px;
+    font-size: 0.92rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
 }
 
 .tools-send-btn:hover {
-    background: var(--mint-600);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+}
+
+.tools-send-btn:active {
+    transform: translateY(0);
 }
 
 .tools-output-section {
     background: var(--bg-card);
     border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    min-height: 200px;
 }
 
 .tools-output-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border-light);
-    background: rgba(16, 185, 129, 0.03);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.04) 0%, rgba(16, 185, 129, 0.01) 100%);
 }
 
 .tools-output-label {
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--mint-600);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tools-output-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mint-400);
 }
 
 .tools-copy-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
+    gap: 5px;
+    padding: 7px 14px;
     border: 1px solid var(--border-light);
-    border-radius: var(--radius-sm);
+    border-radius: 16px;
     background: white;
     font-size: 0.8rem;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
 }
 
 .tools-copy-btn:hover {
     border-color: var(--mint-300);
     color: var(--mint-600);
+    background: var(--mint-50);
 }
 
 .tools-output-content {
-    padding: 20px;
+    padding: 24px;
     font-size: 0.95rem;
-    line-height: 1.7;
+    line-height: 1.8;
     color: var(--text-primary);
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .tools-output-content h2 {
     font-size: 1.1rem;
-    margin: 16px 0 8px;
+    margin: 20px 0 10px;
     color: var(--mint-600);
 }
 
 .tools-output-content h3 {
     font-size: 1rem;
-    margin: 12px 0 6px;
+    margin: 14px 0 8px;
 }
 
 .tools-loading {
@@ -2031,7 +2057,18 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 16px;
-    color: var(--text-muted);
+    padding: 20px;
+    color: var(--mint-500);
     font-size: 0.9rem;
+}
+
+.streaming-cursor {
+    animation: blink 0.8s infinite;
+    color: var(--mint-400);
+    font-weight: 300;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }

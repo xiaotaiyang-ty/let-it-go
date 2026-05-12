@@ -94,8 +94,8 @@
             <div class="tools-page">
                 <!-- 页面标题 -->
                 <div class="tools-header">
-                    <h2 class="tools-title">工具箱</h2>
-                    <p class="tools-subtitle">选择一个工具，粘贴内容，一键优化</p>
+                    <h2 class="tools-title">🧰 工具箱</h2>
+                    <p class="tools-subtitle">选一个工具，粘贴内容，一键变好</p>
                 </div>
 
                 <!-- Prompt 卡片选择区 -->
@@ -114,7 +114,7 @@
                         id="toolInput"
                         class="tools-textarea"
                         placeholder="在这里粘贴你要处理的内容..."
-                        rows="4"
+                        rows="5"
                     ></textarea>
                     <button class="tools-send-btn" id="toolSendBtn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -122,6 +122,16 @@
                         </svg>
                         开始处理
                     </button>
+                </div>
+
+                <!-- 加载指示器 -->
+                <div class="tools-loading" id="toolLoading" style="display: none;">
+                    <span class="loading-text">正在认真处理中</span>
+                    <span class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
                 </div>
 
                 <!-- 输出区 -->
@@ -138,16 +148,6 @@
                     </div>
                     <div class="tools-output-content" id="toolOutputContent">
                     </div>
-                </div>
-
-                <!-- 加载指示器 -->
-                <div class="tools-loading" id="toolLoading" style="display: none;">
-                    <span class="loading-text">正在处理中</span>
-                    <span class="loading-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </span>
                 </div>
             </div>
         </main>
