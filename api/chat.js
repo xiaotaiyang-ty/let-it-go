@@ -52,6 +52,38 @@ const PROMPTS = {
 
 💭 **一点补充**：以上是基于你的描述做的还原，真实情况可能更复杂。如果想继续聊聊，随时说。`,
 
+  '温和表达': `你是一位职场沟通润色助手，专门帮助用户将生硬、直接的工作表达优化为温和、得体且专业的版本。
+
+【目标】
+将用户输入的原始表达进行润色，使其更适合在同事之间的日常工作沟通中使用（如微信群、飞书、钉钉等即时通讯场景）。
+
+【润色原则】
+1. **命令 → 协作**：把指令式语气转为请求协作的语气（如"你去做X" → "麻烦帮忙X哈"）
+2. **否定 → 建议**：把否定式判断转为建设性建议（如"没必要做X" → "可以先不急着X，我们看看再说"）
+3. **个体 → 团队**：多用"咱们/我们"，少用"你/你们"，强化团队感
+4. **补充温度**：适当添加语气词（哈、呀、～）和 emoji，让文字沟通不显冷漠
+5. **保留原意**：绝不改变原文的核心意思、关键信息和专业术语
+6. **匹配场景**：保持职场分寸感，友好但不油腻，轻松但不随便
+
+【输出格式】
+---
+
+## ✨ 润色后
+
+[直接给出润色后的版本，可以直接复制使用]
+
+---
+
+💡 **改了什么**：简要说明调整了哪些地方（1-3点）
+
+---
+
+【注意事项】
+- 如果原文已经足够得体，只需微调或告知用户"表达已经很好"
+- 如果原文包含多段/多条消息，逐条分别润色
+- 不要过度润色导致显得虚伪或啰嗦，保持简洁自然
+- 如果语境不明确，可以先简单询问（发给谁、什么场景）再润色`,
+
   '停止灾难化': `你是一个帮助用户停止灾难化思维的心理陪伴助手。用户刚刚向你倾诉了一件让ta焦虑的事情，现在需要你帮ta跳出焦虑循环。
 
 【你的任务】
@@ -288,23 +320,33 @@ module.exports = async function handler(req, res) {
     let finalMessages = [...messages];
     let mysteryBoxInfo = null; // 盲盒信息
 
-    // 如果使用特定功能，将对话汇总后发送（参考 v3 深夜书房版）
+    // 工具箱类 Prompt：直接用用户输入作为待处理内容
+    const TOOL_PROMPTS = ['温和表达'];
+
     if (function_used && PROMPTS[function_used]) {
-      // 汇总对话历史
-      const conversationSummary = messages.map(m => {
-        const prefix = m.role === 'user' ? '用户说：' : 'AI说：';
-        return prefix + m.content;
-      }).join('\n\n');
+      if (TOOL_PROMPTS.includes(function_used)) {
+        // 工具箱类：取最后一条用户消息作为待处理内容
+        const lastUserMsg = messages.filter(m => m.role === 'user').pop();
+        finalMessages = [
+          { role: 'system', content: PROMPTS[function_used] },
+          { role: 'user', content: lastUserMsg ? lastUserMsg.content : '' }
+        ];
+      } else {
+        // 对话分析类（换位思考、停止灾难化）：汇总对话历史
+        const conversationSummary = messages.map(m => {
+          const prefix = m.role === 'user' ? '用户说：' : 'AI说：';
+          return prefix + m.content;
+        }).join('\n\n');
 
-      // 构建分析请求
-      const promptText = function_used === '换位思考'
-        ? `以下是用户的倾诉内容：\n\n${conversationSummary}\n\n请帮用户进行换位思考分析。`
-        : `以下是用户的倾诉内容：\n\n${conversationSummary}\n\n请帮用户停止灾难化思维，给出深度开导。`;
+        const promptText = function_used === '换位思考'
+          ? `以下是用户的倾诉内容：\n\n${conversationSummary}\n\n请帮用户进行换位思考分析。`
+          : `以下是用户的倾诉内容：\n\n${conversationSummary}\n\n请帮用户停止灾难化思维，给出深度开导。`;
 
-      finalMessages = [
-        { role: 'system', content: PROMPTS[function_used] },
-        { role: 'user', content: promptText }
-      ];
+        finalMessages = [
+          { role: 'system', content: PROMPTS[function_used] },
+          { role: 'user', content: promptText }
+        ];
+      }
     } else if (function_used === '惊喜盲盒') {
       // 惊喜盲盒：随机抽取视角
       const selected = getRandomMysteryPrompt();

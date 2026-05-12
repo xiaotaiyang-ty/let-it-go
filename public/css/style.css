@@ -1833,3 +1833,205 @@ body {
 .settings-link-arrow {
     color: var(--text-muted);
 }
+
+/* ========== 工具箱页面 ========== */
+.tools-page {
+    padding: 40px 32px;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.tools-header {
+    text-align: center;
+}
+
+.tools-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.tools-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.tools-cards {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.tool-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.tool-card:hover {
+    border-color: var(--mint-300);
+    background: var(--mint-50);
+    color: var(--mint-600);
+}
+
+.tool-card.active {
+    border-color: var(--mint-400);
+    background: var(--mint-100);
+    color: var(--mint-600);
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+}
+
+.tool-card-emoji {
+    font-size: 1.2rem;
+}
+
+.tool-description {
+    padding: 12px 16px;
+    background: var(--mint-50);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--mint-400);
+}
+
+.tool-description p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.tools-input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tools-textarea {
+    width: 100%;
+    min-height: 120px;
+    max-height: 300px;
+    padding: 16px;
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    resize: vertical;
+    transition: border-color var(--transition-fast);
+    font-family: inherit;
+}
+
+.tools-textarea:focus {
+    outline: none;
+    border-color: var(--mint-400);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.tools-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.tools-send-btn {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    background: var(--mint-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.tools-send-btn:hover {
+    background: var(--mint-600);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.tools-output-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.tools-output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-light);
+    background: rgba(16, 185, 129, 0.03);
+}
+
+.tools-output-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--mint-600);
+}
+
+.tools-copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    background: white;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.tools-copy-btn:hover {
+    border-color: var(--mint-300);
+    color: var(--mint-600);
+}
+
+.tools-output-content {
+    padding: 20px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.tools-output-content h2 {
+    font-size: 1.1rem;
+    margin: 16px 0 8px;
+    color: var(--mint-600);
+}
+
+.tools-output-content h3 {
+    font-size: 1rem;
+    margin: 12px 0 6px;
+}
+
+.tools-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
